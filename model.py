@@ -22,7 +22,7 @@ def create_model(**kwargs):
 
 # The heart of the matter
 def single_dense_model(learning_rate=0.001, dropout=0, inter_activation='tanh',
-        num_layers=8, neurons=100,lstm=False,nlstm=0, scale=False, 
+        num_layers=8, neurons=100, scale=False, 
         skip=0, batch_normalization=False, regularization=False, block=None,
         **kwargs):
     # num_layers = num
@@ -75,10 +75,6 @@ def single_dense_model(learning_rate=0.001, dropout=0, inter_activation='tanh',
             if (i+1) % skip == 0:
                 layers = Add()([prev, layers])
                 prev = layers
-        # Slide in an lstm
-        if lstm and nlstm > 0:
-            layers = LSTM(neurons)(layers)
-            nlstm -= 1
         layers = Dropout(dropout)(layers)
     # Output Layer
     # layers = Dense(25)(layers)
@@ -94,23 +90,3 @@ def single_dense_model(learning_rate=0.001, dropout=0, inter_activation='tanh',
             # metrics=["accuracy"])
     return model
 
-def generateResidualBlock(inputLayer, numLayers, numNeurons, activator, reg=None):
-    """(Keras.Layer, int, int, lambda, (str, float)) -> Keras.Layer
-
-    Takes in an input layer, the number of layers for the residual block,
-    the number of neurons per layer, and a tuple containing regularization
-    parameters.
-
-    Generates a residual block numLayers long where each layer has numNeurons
-    number of neurons per layers.
-    Then adds the skip connection by connecting the inputLayer to the final
-    layer.
-    Lastly returns the final layer.
-
-    The activator variable should be a lambda which only takes a Keras.Layer as
-    input.
-    """
-    firstLayer = Dense(numNeurons)(inputLayer)
-    firstLayer = activator(firstLayer)
-    for i in range(numLayers - 1):
-        pass
