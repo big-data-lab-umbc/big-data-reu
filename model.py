@@ -21,34 +21,18 @@ def create_model(**kwargs):
     return single_dense_model(**kwargs)
 
 # The heart of the matter
-def single_dense_model(learning_rate=0.001, dropout=0, inter_activation='tanh',
+def single_dense_model(learning_rate=0.001, dropout=0, activator='tanh',
         num_layers=8, neurons=100, scale=False, 
         skip=0, batch_normalization=False, regularization=False, 
         **kwargs):
     # num_layers = num
     # main_input = Input(shape=(17,1,1))
-    if regularization:
-        if regularization == "l2":
-            reg = lambda : l2(0.01)
-        elif regularization == "l1":
-            reg = lambda : l1(0.01)
-    else:
-        reg = None
     # main_input = Input(shape=(17))
     main_input = Input(shape=(18))
-    # layers = Flatten()(main_input)
-    # First dense layer
     layers = main_input
     prev = None
+    # Scale neurons down
     for i in range(num_layers):
-        # Prepare activation
-        if inter_activation == 'leakyrelu':
-            activator = lambda l: LeakyReLU()(l)
-        elif inter_activation == 'prelu':
-            activator = lambda l: PReLU()(l)
-        else:
-            activator = lambda l: Activation(inter_activation)(l)
-        # Scale neurons down
         # Generate a layer with all the bells
         layers = makeFullLayer(layers, 
                 neurons, 
@@ -80,6 +64,12 @@ def single_dense_model(learning_rate=0.001, dropout=0, inter_activation='tanh',
 
 def makeFullLayer(layer, nNeurons, dropout=0.0, batchNorm=False, activator=None, reg=None):
     # Assemble a full NN layer from pieces
+    # Get the regularizer of we need one
+    if reg is not None:
+        if reg == "l2":
+            reg = lambda : l2(0.01)
+        elif reg == "l1":
+            reg = lambda : l1(0.01)
 
     # Generate the meat of the layer
     if reg is None:
@@ -88,9 +78,12 @@ def makeFullLayer(layer, nNeurons, dropout=0.0, batchNorm=False, activator=None,
         l = Dense(nNeurons,
             kernel_regularizer=reg,
             activity_regularizer=reg)(layers)
+
     # Use an activator is needed
     if activator is not None:
-        l = activator(l)
+        # Get activator returns a lambda which call like a function so this is
+        # getActivator(activator)(l) -> activator(l), g o f style
+        l = getActivator(activator)(l)
     # Rule of thumb is now to put normalization after activation    
     # Put a batch norm on    
     if batchNorm:
@@ -108,3 +101,17 @@ def generateResidualPGMLBlock(layer, nLayers, nNeurons, batchNorm=False,
     
     l = Add()([prev, l])
     return l
+
+def getActivator(name, **kwargs):
+    if kwargs is not None:
+        print("ERROR: More than name provided?")
+        exit()
+    name = name.lower()
+    # Prepare activation for future use with helper functions
+    if name == 'leakyrelu':
+        activator = lambda l: LeakyReLU()(l)
+    elif name == 'prelu':
+        activator = lambda l: PReLU()(l)
+    else:
+        activator = lambda l: Activation(name)(l)
+    return activator
