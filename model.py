@@ -52,6 +52,7 @@ def single_dense_model(learning_rate=0.001, dropout=0, inter_activation='tanh',
         # Generate a layer with all the bells
         layers = makeFullLayer(layers, 
                 neurons, 
+                dropout=dropout,
                 batchNorm=batch_normalization, 
                 activator=activator, 
                 reg=reg())
@@ -77,7 +78,7 @@ def single_dense_model(learning_rate=0.001, dropout=0, inter_activation='tanh',
             # metrics=["accuracy"])
     return model
 
-def makeFullLayer(layer, nNeurons, batchNorm=False, activator=None, reg=None):
+def makeFullLayer(layer, nNeurons, dropout=0.0, batchNorm=False, activator=None, reg=None):
     # Assemble a full NN layer from pieces
 
     # Generate the meat of the layer
@@ -87,16 +88,23 @@ def makeFullLayer(layer, nNeurons, batchNorm=False, activator=None, reg=None):
         l = Dense(nNeurons,
             kernel_regularizer=reg,
             activity_regularizer=reg)(layers)
-    # Put a batch norm on    
-    if batchNorm:
-        l = BatchNormalization()(l)
     # Use an activator is needed
     if activator is not None:
         l = activator(l)
-
+    # Rule of thumb is now to put normalization after activation    
+    # Put a batch norm on    
+    if batchNorm:
+        l = BatchNormalization()(l)
+    l = Dropout(dropout)(l)
     return l
 
 
-def generateResidualPGMLBlock(layer, nLayers, nNeurons, batchNorm, 
+def generateResidualPGMLBlock(layer, nLayers, nNeurons, batchNorm=False, 
         activator=None, reg=None):
-    pass
+    l = layer
+    prev = layer
+    for i in range(nLayers):
+        l = makeFullLayer(l, nNeurons, batchNorm, activator, reg)
+    
+    l = Add()([prev, l])
+    return l
