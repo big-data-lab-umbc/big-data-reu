@@ -23,7 +23,7 @@ def create_model(**kwargs):
 # The heart of the matter
 def single_dense_model(learning_rate=0.001, dropout=0, inter_activation='tanh',
         num_layers=8, neurons=100, scale=False, 
-        skip=0, batch_normalization=False, regularization=False, block=None,
+        skip=0, batch_normalization=False, regularization=False, 
         **kwargs):
     # num_layers = num
     # main_input = Input(shape=(17,1,1))
