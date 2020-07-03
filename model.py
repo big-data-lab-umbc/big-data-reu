@@ -29,9 +29,11 @@ def single_dense_model(learning_rate=0.001, dropout=0, inter_activation='tanh',
     # main_input = Input(shape=(17,1,1))
     if regularization:
         if regularization == "l2":
-            reg = l2(0.01)
+            reg = lambda : l2(0.01)
         elif regularization == "l1":
-            reg = l1(0.01)
+            reg = lambda : l1(0.01)
+    else:
+        reg = None
     # main_input = Input(shape=(17))
     main_input = Input(shape=(18))
     # layers = Flatten()(main_input)
@@ -39,35 +41,20 @@ def single_dense_model(learning_rate=0.001, dropout=0, inter_activation='tanh',
     layers = main_input
     prev = None
     for i in range(num_layers):
-        # Scale neurons down
-        if scale == True:
-            if neurons/(2**i) > 4:
-                if regularization:
-                    layers = Dense(neurons/(2**i),
-                        kernel_regularizer=reg,
-                        activity_regularizer=reg)(layers)
-                else:
-                    layers = Dense(neurons/(2**i))(layers)
-            else:
-                # layers = Dense(4)(layers)
-                layers = Dense(25)(layers)
-        else:
-            if regularization:
-                layers = Dense(neurons,
-                    kernel_regularizer=reg,
-                    activity_regularizer=reg)(layers)
-            else:
-                layers = Dense(neurons)(layers)
-        # Adding batch normalization
-        if batch_normalization == True:
-            BatchNormalization()(layers)
-        # Adding activation
+        # Prepare activation
         if inter_activation == 'leakyrelu':
-            layers = LeakyReLU()(layers)
+            activator = lambda l: LeakyReLU()(l)
         elif inter_activation == 'prelu':
-            layers = PReLU()(layers)
+            activator = lambda l: PReLU()(l)
         else:
-            layers = Activation(inter_activation)(layers)
+            activator = lambda l: Activation(inter_activation)(l)
+        # Scale neurons down
+        # Generate a layer with all the bells
+        layers = makeFullLayer(layers, 
+                neurons, 
+                batchNorm=batch_normalization, 
+                activator=activator, 
+                reg=reg())
         # Add a skip connection feature with no downscaling
         if not scale:
             if i == 0:
@@ -90,3 +77,26 @@ def single_dense_model(learning_rate=0.001, dropout=0, inter_activation='tanh',
             # metrics=["accuracy"])
     return model
 
+def makeFullLayer(layer, nNeurons, batchNorm=False, activator=None, reg=None):
+    # Assemble a full NN layer from pieces
+
+    # Generate the meat of the layer
+    if reg is None:
+        l = Dense(nNeurons)(layer) 
+    else:
+        l = Dense(nNeurons,
+            kernel_regularizer=reg,
+            activity_regularizer=reg)(layers)
+    # Put a batch norm on    
+    if batchNorm:
+        l = BatchNormalization()(l)
+    # Use an activator is needed
+    if activator is not None:
+        l = activator(l)
+
+    return l
+
+
+def generateResidualPGMLBlock(layer, nLayers, nNeurons, batchNorm, 
+        activator=None, reg=None):
+    pass
