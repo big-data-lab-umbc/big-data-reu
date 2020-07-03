@@ -23,7 +23,7 @@ def create_model(**kwargs):
 # The heart of the matter
 def single_dense_model(learning_rate=0.001, dropout=0, inter_activation='tanh',
         num_layers=8, neurons=100,lstm=False,nlstm=0, scale=False, 
-        skip=0, batch_normalization=False, regularization=False, branch=None,
+        skip=0, batch_normalization=False, regularization=False, block=None,
         **kwargs):
     # num_layers = num
     # main_input = Input(shape=(17,1,1))
@@ -84,10 +84,7 @@ def single_dense_model(learning_rate=0.001, dropout=0, inter_activation='tanh',
     # layers = Dense(25)(layers)
     layers = Dense(15)(layers)
     # layers = Dense(4)(layers)
-    if branch is not None:
-        layers = Activation('softmax', name="output_{}".format(branch))(layers)
-    else:
-        layers = Activation('softmax')(layers)
+    layers = Activation('softmax')(layers)
     model = Model(inputs=main_input, 
             outputs=layers)
     decay = learning_rate /  kwargs['epochs']
@@ -97,16 +94,23 @@ def single_dense_model(learning_rate=0.001, dropout=0, inter_activation='tanh',
             # metrics=["accuracy"])
     return model
 
-class DenseIsolationTrainer:
-    def __init__(self, **kwargs):
-        self.model = single_dense_model(**kwargs)
-        self.kwargs = kwargs
-        # Expose parts of the underlying model
-        self.optimizer = self.model.optimizer
+def generateResidualBlock(inputLayer, numLayers, numNeurons, activator, reg=None):
+    """(Keras.Layer, int, int, lambda, (str, float)) -> Keras.Layer
 
-    def fit(self, **kwargs):
-        # Use train on batch
+    Takes in an input layer, the number of layers for the residual block,
+    the number of neurons per layer, and a tuple containing regularization
+    parameters.
+
+    Generates a residual block numLayers long where each layer has numNeurons
+    number of neurons per layers.
+    Then adds the skip connection by connecting the inputLayer to the final
+    layer.
+    Lastly returns the final layer.
+
+    The activator variable should be a lambda which only takes a Keras.Layer as
+    input.
+    """
+    firstLayer = Dense(numNeurons)(inputLayer)
+    firstLayer = activator(firstLayer)
+    for i in range(numLayers - 1):
         pass
-
-    def compiler(self, **kwargs):
-        self.model.compile(**kwargs)
