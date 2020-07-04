@@ -21,40 +21,39 @@ def create_model(**kwargs):
     return single_dense_model(**kwargs)
 
 # The heart of the matter
-def single_dense_model(learning_rate=0.001, dropout=0, activator='tanh',
-        num_layers=8, neurons=100, scale=False, 
-        skip=0, batch_normalization=False, regularization=False, 
+def single_dense_model(learning_rate=0.001, dropout=0, inter_activaton='tanh',
+        num_layers=8, neurons=100, scale=False, skip=0, 
+        batch_normalization=False, regularization=None, 
         **kwargs):
-    # num_layers = num
-    # main_input = Input(shape=(17,1,1))
-    # main_input = Input(shape=(17))
+    activator = inter_activation
+    # Determine number of residual blocks
+    if skip !=0:
+        blocks = num_layers // skip
+        nLayers = skip
+        skip = True
+    else:
+        blocks = 1
+        nLayers = num_layers
+        skip = False
+
     main_input = Input(shape=(18))
     layers = main_input
-    prev = None
-    # Scale neurons down
-    for i in range(num_layers):
-        # Generate a layer with all the bells
-        layers = makeFullLayer(layers, 
-                neurons, 
-                dropout=dropout,
-                batchNorm=batch_normalization, 
-                activator=activator, 
-                reg=reg())
-        # Add a skip connection feature with no downscaling
+    for block in range(blocks):
         if not scale:
-            if i == 0:
-                prev = layers
-            if (i+1) % skip == 0:
-                layers = Add()([prev, layers])
-                prev = layers
-        layers = Dropout(dropout)(layers)
+            nNeurons = neurons
+        else:
+            if neurons // 2**block >= 4:
+                nNeurons = neurons // (2**block)
+            else:
+                nNeurons = 4
+        layers = generateResidualPGMLBlock(layers, nLayers, nNeurons, batchNorm=False, 
+            activator=activator, reg=regularization, skip=skip)
     # Output Layer
-    # layers = Dense(25)(layers)
     layers = Dense(15)(layers)
-    # layers = Dense(4)(layers)
     layers = Activation('softmax')(layers)
     model = Model(inputs=main_input, 
             outputs=layers)
+    ##############
     decay = learning_rate /  kwargs['epochs']
     model.compile(Adam(lr=learning_rate, decay=decay), "categorical_crossentropy", 
             metrics=["accuracy"])
@@ -93,13 +92,13 @@ def makeFullLayer(layer, nNeurons, dropout=0.0, batchNorm=False, activator=None,
 
 
 def generateResidualPGMLBlock(layer, nLayers, nNeurons, batchNorm=False, 
-        activator=None, reg=None):
+        activator=None, reg=None, skip=True):
     l = layer
     prev = layer
     for i in range(nLayers):
         l = makeFullLayer(l, nNeurons, batchNorm, activator, reg)
-    
-    l = Add()([prev, l])
+    if skip:
+        l = Add()([prev, l])
     return l
 
 def getActivator(name, **kwargs):
@@ -115,3 +114,12 @@ def getActivator(name, **kwargs):
     else:
         activator = lambda l: Activation(name)(l)
     return activator
+
+if __name__ == "__main__":
+    # Load params.json
+    from json import load as loadf
+    with open("params.json", "rb") as infile:
+        params = loadf(infile)
+
+    m = create_model(**params)
+    m.summary()
