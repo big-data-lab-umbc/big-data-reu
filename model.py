@@ -21,7 +21,7 @@ def create_model(**kwargs):
     return single_dense_model(**kwargs)
 
 # The heart of the matter
-def single_dense_model(learning_rate=0.001, dropout=0, inter_activaton='tanh',
+def single_dense_model(learning_rate=0.001, dropout=0, inter_activation='tanh',
         num_layers=8, neurons=100, scale=False, skip=0, 
         batch_normalization=False, regularization=None, 
         **kwargs):
@@ -38,30 +38,49 @@ def single_dense_model(learning_rate=0.001, dropout=0, inter_activaton='tanh',
 
     main_input = Input(shape=(18))
     layers = main_input
+    if scale:
+        # Is "scale_block_repeat" set?
+        if "scale_block_repeat" in kwargs.keys():
+            repeat = kwargs["scale_block_repeat"]
+        else:
+            repeat = 1
+    rep_block = 0
+    scaleBlock = 0
     for block in range(blocks):
+
         if not scale:
             nNeurons = neurons
         else:
-            if neurons // 2**block >= 4:
-                nNeurons = neurons // (2**block)
-            else:
-                nNeurons = 4
-        layers = generateResidualPGMLBlock(layers, nLayers, nNeurons, batchNorm=False, 
-            activator=activator, reg=regularization, skip=skip)
+            if rep_block < repeat:
+                rep_block += 1
+                print(1)
+            elif rep_block == repeat:
+                print(2)
+                rep_block = 1
+                scaleBlock += 1
+            nNeurons = neurons // (2**scaleBlock)
+            if nNeurons <= 16:
+                nNeurons = 16
+
+        layers = generateResidualPGMLBlock(layers, nLayers, nNeurons, 
+                dropout=dropout, batchNorm=False, activator=activator, 
+                reg=regularization, skip=skip, block=block)
     # Output Layer
     layers = Dense(15)(layers)
     layers = Activation('softmax')(layers)
     model = Model(inputs=main_input, 
             outputs=layers)
     ##############
-    decay = learning_rate /  kwargs['epochs']
-    model.compile(Adam(lr=learning_rate, decay=decay), "categorical_crossentropy", 
+    # decay = learning_rate /  kwargs['epochs']
+    # model.compile(Adam(lr=learning_rate, decay=decay), "categorical_crossentropy", 
+            # metrics=["accuracy"])
+    model.compile(Adam(lr=learning_rate), "categorical_crossentropy", 
             metrics=["accuracy"])
     # model.compile(Adam(lr=learning_rate,clipnorm=1.0, clipvalue=0.5), "categorical_crossentropy", 
             # metrics=["accuracy"])
     return model
 
-def makeFullLayer(layer, nNeurons, dropout=0.0, batchNorm=False, activator=None, reg=None):
+def makeFullLayer(layers, nNeurons, dropout=0.0, batchNorm=False, activator=None, reg=None):
     # Assemble a full NN layer from pieces
     # Get the regularizer of we need one
     if reg is not None:
@@ -75,8 +94,8 @@ def makeFullLayer(layer, nNeurons, dropout=0.0, batchNorm=False, activator=None,
         l = Dense(nNeurons)(layer) 
     else:
         l = Dense(nNeurons,
-            kernel_regularizer=reg,
-            activity_regularizer=reg)(layers)
+            kernel_regularizer=reg(),
+            activity_regularizer=reg())(layers)
 
     # Use an activator is needed
     if activator is not None:
@@ -91,19 +110,33 @@ def makeFullLayer(layer, nNeurons, dropout=0.0, batchNorm=False, activator=None,
     return l
 
 
-def generateResidualPGMLBlock(layer, nLayers, nNeurons, batchNorm=False, 
-        activator=None, reg=None, skip=True):
+def generateResidualPGMLBlock(layer, nLayers, nNeurons, dropout=0.0, 
+        batchNorm=False, activator=None, reg=None, skip=True, block=None):
     l = layer
     prev = layer
     for i in range(nLayers):
-        l = makeFullLayer(l, nNeurons, batchNorm, activator, reg)
+        l = makeFullLayer(l, nNeurons, dropout, batchNorm, activator, reg)
+        # makeFullLayer(layer, nNeurons, dropout=0.0, batchNorm=False, activator=None, reg=None)
     if skip:
-        l = Add()([prev, l])
+        if prev.shape[1] == l.shape[1]:
+            l = Add()([prev, l])
+        else:
+            # In the case that the block before has different output dimensions
+            # than this block we have to push the data through a single layer to
+            # get it shaped right
+            # Typically we do this in convoluational networks by convolving the
+            # data into the new shape. Here we will just push it through a dense
+            # layer. No activation...
+            # There are a lot of ways to do this even using an upsampling block
+            # instead but we'll try this for now. Something to look into...
+            a = Dense(l.shape[1], name="skip_adjuster_{}".format(block))(prev)
+            l = Add()([a, l])
     return l
 
 def getActivator(name, **kwargs):
-    if kwargs is not None:
+    if kwargs:
         print("ERROR: More than name provided?")
+        print(kwargs)
         exit()
     name = name.lower()
     # Prepare activation for future use with helper functions
