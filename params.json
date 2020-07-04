@@ -6,7 +6,7 @@
     "neurons": 4096,
     "scale": true,
     "scale_block_repeat": 2,
-    "skip": 2,
+    "skip": 4,
     "batch_normalization": true,
     "regularization": "l2"
 }
