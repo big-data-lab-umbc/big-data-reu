@@ -53,9 +53,9 @@ def single_dense_model(learning_rate=0.001, dropout=0, inter_activation='tanh',
         else:
             if rep_block < repeat:
                 rep_block += 1
-                print(1)
+                # print(1)
             elif rep_block == repeat:
-                print(2)
+                # print(2)
                 rep_block = 1
                 scaleBlock += 1
             nNeurons = neurons // (2**scaleBlock)
@@ -91,7 +91,7 @@ def makeFullLayer(layers, nNeurons, dropout=0.0, batchNorm=False, activator=None
 
     # Generate the meat of the layer
     if reg is None:
-        l = Dense(nNeurons)(layer) 
+        l = Dense(nNeurons)(layers) 
     else:
         l = Dense(nNeurons,
             kernel_regularizer=reg(),
