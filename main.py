@@ -111,8 +111,10 @@ if __name__ == "__main__":
         model = create_model(**params)
     # Load data from disk
     import numpy
-    x = numpy.load("../data/inputs.npy")
-    y = numpy.load("../data/outputs.npy")
+    root = ""
+    filebase = ""
+    x = numpy.load("{}/inputs.{}.npy".format(root, filebase))
+    y = numpy.load("{}/outputs.{}.npy".format(root, filebase))
     print("x.shape =", x.shape)
     print("y.shape =", y.shape)
     print("epochs  =", params['epochs'], type(params['epochs']))
@@ -121,7 +123,21 @@ if __name__ == "__main__":
     # Dataset object does nothing in place:
     # https://stackoverflow.com/questions/55645953/shape-of-tensorflow-dataset-data-in-keras-tensorflow-2-0-is-wrong-after-conver
     from tensorflow.data import Dataset
-    data = Dataset.from_tensor_slices((x, y)).shuffle(x.shape[0])
+    data = Dataset.from_tensor_slices((x, y))
+    v = 0.20
+    vrecord = int(x.shape[0]*v)
+    validation = data.take(vrecord)
+    validation = validation.batch(params['batch_size'])
+    validation = validation.repeat(params['epochs'])
+    # Validation -- need to do kfold one day
+    # This set should NOT be distributed
+    data = data.skip(vrecord)
+    vsteps = vrecord // params['batch_size']
+    if vrecord % params['batch_size'] != 0:
+        vsteps += 1
+    # Shuffle the data during preprocessing or suffer...
+    # Parallel randomness == nightmare
+    # data = data.shuffle(x.shape[0])
     # Ordering these two things is very important! 
     # Consider 3 elements, batch size 2 repeat 2
     # [1 2 3] -> [[1 2] [3]] -> [[1 2] [3] [1 2] [3]] (correct) batch -> repeat
@@ -140,6 +156,8 @@ if __name__ == "__main__":
             batch_size=params['batch_size'],
             steps_per_epoch=steps,
             verbose=0, 
+            validation_data=validation,
+            validation_steps=vsteps,
             # validation_split=0.2, verbose=0, 
             callbacks=callbacks)
     # history = model.fit(inputs, outputs, batch_size=params['batch_size'],epochs=params['epochs'],
