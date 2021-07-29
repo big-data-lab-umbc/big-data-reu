@@ -1,5 +1,4 @@
-# big-data-reu
-Repository for 2021 Team 1 project done during the Online Interdisciplinary Big Data Analytics in Science and Engineering REU (Research Experience for Undergraduates) Site program at UMBC. Additional information can be found at https://bigdatareu.umbc.edu/summer2021/
+Team 1 of the REU program at UMBC in summer 2021
 
 **Title:** Big Data and Machine Learning Techniques for Sea Ice Prediction
 
