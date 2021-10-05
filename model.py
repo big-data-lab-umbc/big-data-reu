@@ -4,7 +4,7 @@ from tensorflow.keras.layers import LSTM
 from tensorflow.keras.layers import ReLU, LeakyReLU, PReLU
 from tensorflow.keras.regularizers import l2
 from tensorflow.keras.layers import Add
-from tensorflow.keras.optimizers import Adam, SGD, Adadelta
+from tensorflow.keras.optimizers import Adam, SGD, Adadelta, Nadam
 from tensorflow.keras.layers import SpatialDropout2D
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.models import Model
@@ -21,9 +21,10 @@ def create_model(**kwargs):
     return single_dense_model(**kwargs)
 
 # The heart of the matter
-def single_dense_model(learning_rate=0.001, dropout=0, inter_activation='tanh',
+def single_dense_model(learning_rate=1e-3, dropout=0, inter_activation='tanh',
         num_layers=8, neurons=100, scale=False, skip=0, 
-        batch_normalization=False, regularization=None, 
+        batch_normalization=False, regularization=None, indim=15, outdim=13,
+        optimizer="adam", momentum=0.0, withmomentum=False,
         **kwargs):
     activator = inter_activation
     # Determine number of residual blocks
@@ -36,7 +37,7 @@ def single_dense_model(learning_rate=0.001, dropout=0, inter_activation='tanh',
         nLayers = num_layers
         skip = False
 
-    main_input = Input(shape=(18))
+    main_input = Input(shape=(indim))
     layers = main_input
     if scale:
         # Is "scale_block_repeat" set?
@@ -66,15 +67,20 @@ def single_dense_model(learning_rate=0.001, dropout=0, inter_activation='tanh',
                 dropout=dropout, batchNorm=False, activator=activator, 
                 reg=regularization, skip=skip, block=block)
     # Output Layer
-    layers = Dense(15)(layers)
+    # With doubles
+    # layers = Dense(15)(layers)
+    # Without doubles
+    layers = Dense(outdim)(layers)
     layers = Activation('softmax')(layers)
     model = Model(inputs=main_input, 
             outputs=layers)
     ##############
+    opt = getOptimizer(optimizer=optimizer, momentum=momentum,
+            nesterov=withmomentum, learning_rate=learning_rate)
     # decay = learning_rate /  kwargs['epochs']
     # model.compile(Adam(lr=learning_rate, decay=decay), "categorical_crossentropy", 
             # metrics=["accuracy"])
-    model.compile(Adam(lr=learning_rate), "categorical_crossentropy", 
+    model.compile(opt, "categorical_crossentropy", 
             metrics=["accuracy"])
     # model.compile(Adam(lr=learning_rate,clipnorm=1.0, clipvalue=0.5), "categorical_crossentropy", 
             # metrics=["accuracy"])
@@ -147,6 +153,22 @@ def getActivator(name, **kwargs):
     else:
         activator = lambda l: Activation(name)(l)
     return activator
+
+def getOptimizer(optimizer='adam', nesterov=False, momentum=None, learning_rate=0.1):
+    optimizer = optimizer.lower()
+    if optimizer == 'adam':
+        optimizer = Adam(lr=learning_rate)
+    elif optimizer == 'nadam':
+        optmizer = Nadam(lr=learning_rate)
+    elif optimizer == 'sgd':
+        if momentum is None:
+            momentum = 0.0
+        optimizer = SGD(lr=learning_rate, nesterov=nesterov, momentum=momentum)
+    else:
+        print("{} optimizer not an acceptable variant.".format(optimizer))
+        print("Try: Adam, Nadam, or SGD.")
+        return None
+    return optimizer
 
 if __name__ == "__main__":
     # Load params.json
