@@ -1,6 +1,3 @@
-# PGML
-Help track the evolution of the PGML NN as well 
-
 # Relevant Tags
 
 ## REU.Nature.Pre.Post
