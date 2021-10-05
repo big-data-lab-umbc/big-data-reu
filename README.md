@@ -71,4 +71,4 @@ mv "${ROOTNAME}_normed_maxab.pickle" "${OUTROOT}/"
 ```
 
 You should now have a file which can be trained on by the code in
-[train/](train/)
+[train/](train/).
