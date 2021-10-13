@@ -1,0 +1,23 @@
+{
+    "root": "/umbc/xfs1/cybertrn/reu2021/team2/research/data/",
+    "filename": "150MeV_all_shuffled.csv",
+    "learning_rate": "schedule.step",
+    "normalization": "carlosexample.coolexample",
+    "validation": 0.20,
+    "epochs": 68,
+    "batch_size": 8192,
+    "num_layers": 32,
+    "neurons": 256,
+    "dropout": 0.45,
+    "optimizer": "sgd",
+    "momentum": 0.0,
+    "withmomentum": true,
+    "skip": 8,
+    "inter_activation": "leakyrelu",
+    "regularization": null,
+    "batch_normalization": false,
+    "scale": false,
+    "scale_block_repeat": 1,
+    "indim": 15,
+    "outdim": 13
+}
