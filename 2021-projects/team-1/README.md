@@ -12,3 +12,6 @@ Team 1 of the REU program at UMBC in summer 2021
 
 ### Navigating the Repository
 The names of each directory in this repository correspond to their purpose. *Preprocessing* is where the train and test data sets for each model can be found as well as the code from which they were derived. *Modeling* contains all models of our CNN and ConvLSTMs as well as sample outputs from each model and a copy of the land mask that is used to filter out land values. *Analysis* contains all of the analysis materials used in this research including a vector auto regression model and a climatology analysis. Finally, *Evaluation* contains the data and code used to evaluate and post-process the results from each model. 
+
+### Cite our work
+Eliot Kim, Peter Kruse, Skylar Lama, Jamal Bourne, Michael Hu, Sahara Ali, Yiyi Huang, Jianwu Wang. Multi-Task Deep Learning Based Spatiotemporal Arctic Sea Ice Forecasting. Accepted by the 2021 IEEE International Conference on Big Data (BigData 2021), IEEE. 
