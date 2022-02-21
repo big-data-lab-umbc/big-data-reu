@@ -61,8 +61,8 @@ class MultiOutputConvLSTM():
 	# build the branch for image output
 	# Dense Layer -> Reshape into image
 		x = self.make_default_hidden_layers(inputs)
-		x = keras.layers.Dense(512, activation="relu"))(x)
-		x = keras.layers.Dense(1024, activation="relu"))(x)
+		x = keras.layers.Dense(512, activation="relu")(x)
+		x = keras.layers.Dense(1024, activation="relu")(x)
 		x = keras.layers.Dense(448*304, activation = "linear")(x)
 		image_output = keras.layers.Reshape((448, 304, 1), input_shape=(448*304,), name="image_output")(x)
 		return image_output
