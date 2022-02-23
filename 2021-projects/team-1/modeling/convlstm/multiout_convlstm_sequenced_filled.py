@@ -238,7 +238,7 @@ image_sample_weights = np.ones(len(y_train))
 image_sample_weights[9::12] = 1.2
 
 # define early stopping callback
-early_stopping = keras.callbacks.EarlyStopping(patience=100, restore_best_weights=True)
+early_stopping = keras.callbacks.EarlyStopping(patience=20, restore_best_weights=True)
 
 # compile model
 # optimized with Adam, image output uses custom loss, and extent output uses mse loss
@@ -246,7 +246,7 @@ early_stopping = keras.callbacks.EarlyStopping(patience=100, restore_best_weight
 # fit model
 print(X_train.shape, y_train.shape, y_extent_train.shape)
 history = convLSTM_multiout.fit(x=X_train, y=[y_train, y_extent_train],
-				epochs=1000,
+				epochs=2,
 				batch_size=4,
 				validation_split=.2,
 				sample_weight=[image_sample_weights, extent_sample_weights],
