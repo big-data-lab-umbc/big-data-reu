@@ -145,17 +145,17 @@ def create_transformer(
         encoded_patches = layers.Add()([x3, x2])
 
     # Layer normalization and Global average pooling.
-    representation = layers.LayerNormalization(epsilon=layer_norm_eps)(encoded_patches)
-    representation = layers.GlobalAvgPool1D()(representation)
+    # representation = layers.LayerNormalization(epsilon=layer_norm_eps)(encoded_patches)
+    # representation = layers.GlobalAvgPool1D()(representation)
 
     # Classify outputs.
     # outputs = layers.Dense(units=num_classes, activation="softmax")(representation)
 
     # Create the Keras model.
     # model = keras.Model(inputs=inputs, outputs=outputs)
-    return representation
+    return encoded_patches
 
-transformer = create_transformer(
+transformer_v = create_transformer(
 			tubelet_embedder=TubeletEmbedding(
 				embed_dim=PROJECTION_DIM, patch_size=PATCH_SIZE
 			),
@@ -175,7 +175,7 @@ class MultiOutputConvLSTM():
 		# x = keras.layers.MaxPooling2D((4,4))(x)
 		# x = keras.layers.Conv2D(32, (5,5), activation="relu")(x)
 		# x = keras.layers.Flatten()(x)
-		x = transformer(inputs)
+		x = transformer_v(inputs)
 		x = keras.layers.Dense(256, activation="relu")(x)
 		return x
 
