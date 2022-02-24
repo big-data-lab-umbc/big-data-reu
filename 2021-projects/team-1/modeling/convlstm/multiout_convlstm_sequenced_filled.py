@@ -181,10 +181,8 @@ def create_transformer(
 	# optimized with Adam, image output uses custom loss, and extent output uses mse loss
 	# RMSE for both outputs is measured
     model.compile(optimizer="adamax", 
-		loss={
-		"image_output": custom_mse},
-		metrics={
-		"image_output": keras.metrics.RootMeanSquaredError()})		
+		loss= custom_mse,
+		metrics= [keras.metrics.RootMeanSquaredError()])		
 	# add custom loss function to the model
     return model
 
@@ -294,7 +292,6 @@ convLSTM_multiout.save("multiout_transform")
 # image/exent output
 # predict training values
 image_train_preds = convLSTM_multiout.predict(X_train, batch_size=4)
-
 
 # compare to actual training values
 image_train_rmse = math.sqrt(mean_squared_error(y_train.flatten(), image_train_preds.flatten()))
