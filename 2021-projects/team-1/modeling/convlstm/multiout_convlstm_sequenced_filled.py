@@ -283,7 +283,7 @@ history = convLSTM_multiout.fit(x=X_train, y=y_train,
 				epochs=2,
 				batch_size=4,
 				validation_split=.2,
-				sample_weight=image_sample_weights,
+				# sample_weight=image_sample_weights,
 				callbacks=[early_stopping])
 
 # save fitted model
