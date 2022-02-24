@@ -19,16 +19,13 @@ with open("/home/ubuntu/seaice/data/X_train_rolling_filled_final.npy", "rb") as 
 	X_train = np.load(f)
 with open("/home/ubuntu/seaice/data/y_train_rolling_filled_final.npy", "rb") as f:
 	y_train = np.load(f)
-with open("/home/ubuntu/seaice/data/X_test_rolling_filled_final.npy", "rb") as f:
-	X_test = np.load(f)
-with open("/home/ubuntu/seaice/data/y_test_rolling_filled_final.npy", "rb") as f:
-	y_test = np.load(f)
+
 with open("/home/ubuntu/seaice/data/y_land_mask_actual.npy", "rb") as f:
         y_land_mask = np.load(f)
-with open("/home/ubuntu/seaice/data/y_extent_train_rolling_final.npy", "rb") as f:
-        y_extent_train = np.load(f)
-with open("/home/ubuntu/seaice/data/y_extent_test_rolling_final.npy", "rb") as f:
-        y_extent_test = np.load(f)
+# with open("/home/ubuntu/seaice/data/y_extent_train_rolling_final.npy", "rb") as f:
+#         y_extent_train = np.load(f)
+# with open("/home/ubuntu/seaice/data/y_extent_test_rolling_final.npy", "rb") as f:
+#         y_extent_test = np.load(f)
 
 #reshape y_land_mask to 3 dimensions
 y_land_mask = y_land_mask.reshape(448, 304, 1)
@@ -66,9 +63,13 @@ print("NUM_PATCHES:", NUM_PATCHES)
 
 # ViViT ARCHITECTURE
 LAYER_NORM_EPS = 1e-6
-PROJECTION_DIM = 128
+# PROJECTION_DIM = 128
+# NUM_HEADS = 8
+# NUM_LAYERS = 8
+
+PROJECTION_DIM = 64
 NUM_HEADS = 8
-NUM_LAYERS = 8
+NUM_LAYERS = 4
 
 class TubeletEmbedding(layers.Layer):
     def __init__(self, embed_dim, patch_size, **kwargs):
@@ -165,8 +166,8 @@ def create_transformer(
     
 	# Regression outputs.
     x = layers.Dense(256, activation="relu")(x)
-    x = layers.Dense(512, activation="relu")(x)
-    x = keras.layers.Dense(1024, activation="relu")(x)
+    # x = layers.Dense(512, activation="relu")(x)
+    x = layers.Dense(1024, activation="relu")(x)
     x = layers.Dense(448*304, activation="linear")(x)
     image_output = layers.Reshape((448, 304, 1), input_shape = (448*304,), name="image_output")(x)
 
@@ -266,8 +267,8 @@ convLSTM_multiout = transformer_model
 print(convLSTM_multiout.summary())
 
 # define loss weights for both branches
-extent_sample_weights = np.ones(len(y_extent_train))
-extent_sample_weights[9::12] = 1.2
+# extent_sample_weights = np.ones(len(y_extent_train))
+# extent_sample_weights[9::12] = 1.2
 image_sample_weights = np.ones(len(y_train))
 image_sample_weights[9::12] = 1.2
 
@@ -278,7 +279,9 @@ early_stopping = keras.callbacks.EarlyStopping(patience=20, restore_best_weights
 # optimized with Adam, image output uses custom loss, and extent output uses mse loss
 # RMSE for both outputs is measured
 # fit model
-print(X_train.shape, y_train.shape, y_extent_train.shape)
+# print(X_train.shape, y_train.shape, y_extent_train.shape)
+print(X_train.shape, y_train.shape)
+
 history = convLSTM_multiout.fit(x=X_train, y=y_train,
 				epochs=2,
 				batch_size=4,
@@ -288,6 +291,11 @@ history = convLSTM_multiout.fit(x=X_train, y=y_train,
 
 # save fitted model
 convLSTM_multiout.save("multiout_transform")
+
+with open("/home/ubuntu/seaice/data/X_test_rolling_filled_final.npy", "rb") as f:
+	X_test = np.load(f)
+with open("/home/ubuntu/seaice/data/y_test_rolling_filled_final.npy", "rb") as f:
+	y_test = np.load(f)
 
 # image/exent output
 # predict training values
