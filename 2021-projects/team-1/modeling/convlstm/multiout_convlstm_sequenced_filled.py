@@ -48,7 +48,7 @@ def custom_mse(y_true, y_pred):
 BATCH_SIZE = 32
 AUTO = tf.data.AUTOTUNE
 # INPUT_SHAPE = (28, 28, 28, 1)
-INPUT_SHAPE = (12, 448, 304, 11)
+INPUT_SHAPE = (12, 448, 304, 10)
 NUM_CLASSES = 11
 
 # OPTIMIZER
@@ -104,19 +104,17 @@ class PositionalEncoder(layers.Layer):
         encoded_tokens = encoded_tokens + encoded_positions
         return encoded_tokens
 
-def create_transformer(
-    tubelet_embedder,
+def create_branch(inputs,
+	tubelet_embedder,
     positional_encoder,
     input_shape=INPUT_SHAPE,
     transformer_layers=NUM_LAYERS,
     num_heads=NUM_HEADS,
     embed_dim=PROJECTION_DIM,
     layer_norm_eps=LAYER_NORM_EPS,
-    num_classes=NUM_CLASSES,
-):
-    # Get the input layer
-    inputs = layers.Input(shape=input_shape)
-    # Create patches.
+    num_classes=NUM_CLASSES):
+    # start of image branch
+	# Create image patches.
     patches = tubelet_embedder(inputs)
     # Encode patches.
     encoded_patches = positional_encoder(patches)
@@ -145,17 +143,52 @@ def create_transformer(
         encoded_patches = layers.Add()([x3, x2])
 
     # Layer normalization and Global average pooling.
-    # representation = layers.LayerNormalization(epsilon=layer_norm_eps)(encoded_patches)
-    # representation = layers.GlobalAvgPool1D()(representation)
+    representation = layers.LayerNormalization(epsilon=layer_norm_eps)(encoded_patches)
+    representation = layers.GlobalAvgPool1D()(representation)
+    return representation
 
+def create_transformer(
+    tubelet_embedder,
+    positional_encoder,
+    input_shape=INPUT_SHAPE,
+    transformer_layers=NUM_LAYERS,
+    num_heads=NUM_HEADS,
+    embed_dim=PROJECTION_DIM,
+    layer_norm_eps=LAYER_NORM_EPS,
+    num_classes=NUM_CLASSES,
+):
+    # Get the input layer
+    inputs = layers.Input(shape=input_shape)
+    x = create_branch(inputs, tubelet_embedder, positional_encoder, input_shape, transformer_layers, num_heads, embed_dim, layer_norm_eps, num_classes)
     # Classify outputs.
     # outputs = layers.Dense(units=num_classes, activation="softmax")(representation)
+    
+	# Regression outputs.
+    x = layers.Dense(256, activation="relu")(x)
+    x = layers.Dense(512, activation="relu")(x)
+    x = keras.layers.Dense(1024, activation="relu")(x)
+    x = layers.Dense(448*304, activation="linear")(x)
+    image_output = layers.Reshape((448, 304, 1), input_shape = (448*304,))(x)
+
+	# end of image branch
 
     # Create the Keras model.
-    # model = keras.Model(inputs=inputs, outputs=outputs)
-    return encoded_patches
+    # model = keras.Model(inputs=inputs, outputs=image_output)
+    model = keras.models.Model(inputs=inputs,
+				outputs=image_output,
+				name="sea_ice_net")		
+	# compile model
+	# optimized with Adam, image output uses custom loss, and extent output uses mse loss
+	# RMSE for both outputs is measured
+    model.compile(optimizer="adamax", 
+		loss={
+		"image_output": custom_mse},
+		metrics={
+		"image_output": keras.metrics.RootMeanSquaredError()})		
+	# add custom loss function to the model
+    return model
 
-transformer_v = create_transformer(
+transformer_model = create_transformer(
 			tubelet_embedder=TubeletEmbedding(
 				embed_dim=PROJECTION_DIM, patch_size=PATCH_SIZE
 			),
@@ -175,8 +208,8 @@ class MultiOutputConvLSTM():
 		# x = keras.layers.MaxPooling2D((4,4))(x)
 		# x = keras.layers.Conv2D(32, (5,5), activation="relu")(x)
 		# x = keras.layers.Flatten()(x)
-		x = transformer_v(inputs)
-		x = keras.layers.Dense(256, activation="relu")(x)
+		# x = transformer_v(inputs)
+		x = keras.layers.Dense(256, activation="relu")(inputs)
 		return x
 
 	def build_image_branch(self, inputs):
@@ -229,7 +262,9 @@ class MultiOutputConvLSTM():
 		return model
 
 # contstruct model from class
-convLSTM_multiout = MultiOutputConvLSTM().assemble_full_model(12, 448, 304, 10)
+# convLSTM_multiout = MultiOutputConvLSTM().assemble_full_model(12, 448, 304, 10)
+
+convLSTM_multiout = transformer_model
 print(convLSTM_multiout.summary())
 
 # define loss weights for both branches
@@ -246,7 +281,7 @@ early_stopping = keras.callbacks.EarlyStopping(patience=20, restore_best_weights
 # RMSE for both outputs is measured
 # fit model
 print(X_train.shape, y_train.shape, y_extent_train.shape)
-history = convLSTM_multiout.fit(x=X_train, y=[y_train, y_extent_train],
+history = convLSTM_multiout.fit(x=X_train, y=y_train,
 				epochs=2,
 				batch_size=4,
 				validation_split=.2,
@@ -254,44 +289,45 @@ history = convLSTM_multiout.fit(x=X_train, y=[y_train, y_extent_train],
 				callbacks=[early_stopping])
 
 # save fitted model
-convLSTM_multiout.save("multiout_convLSTM")
+convLSTM_multiout.save("multiout_transform")
 
 # image/exent output
 # predict training values
-image_train_preds, extent_train_preds = convLSTM_multiout.predict(X_train, batch_size=4)
+image_train_preds = convLSTM_multiout.predict(X_train, batch_size=32)
+
 
 # compare to actual training values
 image_train_rmse = math.sqrt(mean_squared_error(y_train.flatten(), image_train_preds.flatten()))
-extent_train_rmse = math.sqrt(mean_squared_error(y_extent_train, extent_train_preds))
+# extent_train_rmse = math.sqrt(mean_squared_error(y_extent_train, extent_train_preds))
 
-#print RMSE and NRMSE
-print("Image Concentration Train RMSE: {} \nExtent Train RMSE: {}".format(image_train_rmse, extent_train_rmse))
-print("Image Concentration Train NRMSE: {} \nExtent Train NRMSE: {}".format(image_train_rmse / np.mean(y_train), extent_train_rmse / np.mean(y_extent_train)))
-print("Image Concentration Train NRMSE (std. dev): {} \nExtent Train NRMSE (std. dev): {}".format(image_train_rmse / np.std(y_train), extent_train_rmse / np.std(y_extent_train)))
-print("Image Train Prediction Shape: {} \nExtent Train Predictions Shape: {}".format(image_train_preds.shape, extent_train_preds.shape))
+# #print RMSE and NRMSE
+print("Image Concentration Train RMSE: {} \nExtent Train RMSE:".format(image_train_rmse))
+print("Image Concentration Train NRMSE: {} \nExtent Train NRMSE:".format(image_train_rmse / np.mean(y_train)))
+print("Image Concentration Train NRMSE (std. dev): {} \nExtent Train NRMSE (std. dev):".format(image_train_rmse / np.std(y_train)))
+print("Image Train Prediction Shape: {} \nExtent Train Predictions Shape: ".format(image_train_preds.shape))
 
 #predict test values
-image_test_preds, extent_test_preds = convLSTM_multiout.predict(X_test, batch_size=4)
+image_test_preds = convLSTM_multiout.predict(X_test, batch_size=32)
 
 #compare to actual test values
 image_test_rmse = math.sqrt(mean_squared_error(y_test.flatten(), image_test_preds.flatten()))
-extent_test_rmse = math.sqrt(mean_squared_error(y_extent_test, extent_test_preds))
+# extent_test_rmse = math.sqrt(mean_squared_error(y_extent_test, extent_test_preds))
 
 # print RMSE and NRMSE
-print("Image Concentration Test RMSE: {} \nExtent Test RMSE: {}".format(image_test_rmse, extent_test_rmse))
-print("Image Concentration Test NRMSE: {} \nExtent Test NRMSE: {}".format(image_test_rmse / np.mean(y_test), extent_test_rmse / np.mean(y_extent_test)))
-print("Image Concentration Test NRMSE (std. dev): {} \nExtent Test NRMSE (std. dev): {}".format(image_test_rmse / np.std(y_test), extent_test_rmse / np.std(y_extent_test)))
-print("Image Test Prediction Shape: {} \nExtent Test Predictions Shape: {}".format(image_test_preds.shape, extent_test_preds.shape))
+print("Image Concentration Test RMSE: {} \nExtent Test RMSE:".format(image_test_rmse))
+print("Image Concentration Test NRMSE: {} \nExtent Test NRMSE: ".format(image_test_rmse / np.mean(y_test)))
+print("Image Concentration Test NRMSE (std. dev): {} \nExtent Test NRMSE (std. dev): ".format(image_test_rmse / np.std(y_test)))
+print("Image Test Prediction Shape: {} \nExtent Test Predictions Shape: ".format(image_test_preds.shape))
 
 # save image/extent outputs:
 with open("/umbc/xfs1/cybertrn/reu2021/team1/research/GitHub/evaluation/convlstm/multiout_filled_convlstm_image_rolling_preds.npy", "wb") as f:
 	np.save(f, image_test_preds)
 with open("/umbc/xfs1/cybertrn/reu2021/team1/research/GitHub/evaluation/convlstm/multiout_filled_convlstm_image_rolling_actual.npy", "wb") as f:
 	np.save(f, y_test)
-with open("/umbc/xfs1/cybertrn/reu2021/team1/research/GitHub/evaluation/convlstm/multiout_filled_convlstm_extent_rolling_preds.npy", "wb") as f:
-	np.save(f, extent_test_preds)
-with open("/umbc/xfs1/cybertrn/reu2021/team1/research/GitHub/evaluation/convlstm/multiout_filled_convlstm_extent_rolling_actual.npy", "wb") as f:
-	np.save(f, y_extent_test)
+# with open("/umbc/xfs1/cybertrn/reu2021/team1/research/GitHub/evaluation/convlstm/multiout_filled_convlstm_extent_rolling_preds.npy", "wb") as f:
+# 	np.save(f, extent_test_preds)
+# with open("/umbc/xfs1/cybertrn/reu2021/team1/research/GitHub/evaluation/convlstm/multiout_filled_convlstm_extent_rolling_actual.npy", "wb") as f:
+# 	np.save(f, y_extent_test)
 
 
 # Plot Loss (Image)
@@ -303,39 +339,39 @@ plt.ylabel('Masked MSE')
 plt.legend(['Train', 'Validation'], loc='upper left')
 plt.savefig('Multiout_Filled_Rolling_Image_ConvLSTM_Loss_Plot.png')
 
-# Plot Loss (Extent)
-plt.clf()
-plt.plot(history.history['extent_output_loss'])
-plt.plot(history.history['val_extent_output_loss'])
-plt.title('Multi Output Model Loss (Extent)')
-plt.xlabel('Epoch')
-plt.ylabel('MSE')
-plt.legend(['Train', 'Validation'], loc='upper left')
-plt.savefig('Multiout_Filled_Rolling_Extent_ConvLSTM_Loss_Plot.png')
+# # Plot Loss (Extent)
+# plt.clf()
+# plt.plot(history.history['extent_output_loss'])
+# plt.plot(history.history['val_extent_output_loss'])
+# plt.title('Multi Output Model Loss (Extent)')
+# plt.xlabel('Epoch')
+# plt.ylabel('MSE')
+# plt.legend(['Train', 'Validation'], loc='upper left')
+# plt.savefig('Multiout_Filled_Rolling_Extent_ConvLSTM_Loss_Plot.png')
 
 
 # Plot Predicted vs. Actual Values (Sea Ice Extent)
 # train
-fig = plt.figure(figsize = (24, 6))
-ax = fig.add_subplot(111)
-ax.plot([i+1 for i in range(y_extent_train.shape[0])], extent_train_preds, c='b', label='Predicted')
-ax.plot([i+1 for i in range(y_extent_train.shape[0])], y_extent_train, c='r', label='Actual')
-ax.set_title('Sea Ice Extent by Month (Training Data)')
-ax.set_xlabel('Month')
-ax.set_ylabel('Sea Ice Extent (in $km^2$)')
-ax.legend()
-ax.grid(True)
-fig.savefig('Multiout_Filled_Rolling_ExtentConvLSTM_train_pred_vs_actual.png')
+# fig = plt.figure(figsize = (24, 6))
+# ax = fig.add_subplot(111)
+# ax.plot([i+1 for i in range(y_extent_train.shape[0])], extent_train_preds, c='b', label='Predicted')
+# ax.plot([i+1 for i in range(y_extent_train.shape[0])], y_extent_train, c='r', label='Actual')
+# ax.set_title('Sea Ice Extent by Month (Training Data)')
+# ax.set_xlabel('Month')
+# ax.set_ylabel('Sea Ice Extent (in $km^2$)')
+# ax.legend()
+# ax.grid(True)
+# fig.savefig('Multiout_Filled_Rolling_ExtentConvLSTM_train_pred_vs_actual.png')
 
-# test
-fig = plt.figure(figsize = (24, 6))
-ax = fig.add_subplot(111)
-ax.plot([i+1 for i in range(y_extent_test.shape[0])], extent_test_preds, c='b', label='Predicted Extent')
-ax.plot([i+1 for i in range(y_extent_test.shape[0])], y_extent_test, c='r', label='Actual Extent')
-ax.set_title('Sea Ice Extent by Month (Testing Data)')
-ax.set_xlabel('Month')
-ax.set_ylabel('Sea Ice Extent (in $km^2$)')
-ax.legend()
-ax.grid(True)
-fig.savefig('Multiout_Filled_Rolling_ExtentConvLSTM_test_pred_vs_actual.png')
+# # test
+# fig = plt.figure(figsize = (24, 6))
+# ax = fig.add_subplot(111)
+# ax.plot([i+1 for i in range(y_extent_test.shape[0])], extent_test_preds, c='b', label='Predicted Extent')
+# ax.plot([i+1 for i in range(y_extent_test.shape[0])], y_extent_test, c='r', label='Actual Extent')
+# ax.set_title('Sea Ice Extent by Month (Testing Data)')
+# ax.set_xlabel('Month')
+# ax.set_ylabel('Sea Ice Extent (in $km^2$)')
+# ax.legend()
+# ax.grid(True)
+# fig.savefig('Multiout_Filled_Rolling_ExtentConvLSTM_test_pred_vs_actual.png')
 
