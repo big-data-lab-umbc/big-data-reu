@@ -285,7 +285,7 @@ history = convLSTM_multiout.fit(x=X_train, y=y_train,
 				epochs=2,
 				batch_size=4,
 				validation_split=.2,
-				sample_weight=[image_sample_weights, extent_sample_weights],
+				sample_weight=image_sample_weights,
 				callbacks=[early_stopping])
 
 # save fitted model
@@ -293,7 +293,7 @@ convLSTM_multiout.save("multiout_transform")
 
 # image/exent output
 # predict training values
-image_train_preds = convLSTM_multiout.predict(X_train, batch_size=32)
+image_train_preds = convLSTM_multiout.predict(X_train, batch_size=4)
 
 
 # compare to actual training values
@@ -307,7 +307,7 @@ print("Image Concentration Train NRMSE (std. dev): {} \nExtent Train NRMSE (std.
 print("Image Train Prediction Shape: {} \nExtent Train Predictions Shape: ".format(image_train_preds.shape))
 
 #predict test values
-image_test_preds = convLSTM_multiout.predict(X_test, batch_size=32)
+image_test_preds = convLSTM_multiout.predict(X_test, batch_size=4)
 
 #compare to actual test values
 image_test_rmse = math.sqrt(mean_squared_error(y_test.flatten(), image_test_preds.flatten()))
