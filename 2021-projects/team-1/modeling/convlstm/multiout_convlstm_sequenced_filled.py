@@ -168,7 +168,7 @@ def create_transformer(
     x = layers.Dense(512, activation="relu")(x)
     x = keras.layers.Dense(1024, activation="relu")(x)
     x = layers.Dense(448*304, activation="linear")(x)
-    image_output = layers.Reshape((448, 304, 1), input_shape = (448*304,))(x)
+    image_output = layers.Reshape((448, 304, 1), input_shape = (448*304,), name="image_output")(x)
 
 	# end of image branch
 
