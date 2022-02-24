@@ -6,6 +6,8 @@ from tensorflow import keras
 from tensorflow.compat.v1.keras import backend as K
 from sklearn.metrics import mean_squared_error
 from tensorflow.keras import layers
+from sklearn.metrics import mean_squared_error
+import matplotlib.pyplot as plt
 
 '''
 Author: Peter I. Kruse
@@ -13,25 +15,24 @@ This model is a multi-task regression ConvLSTM, taking spatio-temporal input and
 '''
 
 # Data loading
-with open("/umbc/xfs1/cybertrn/reu2021/team1/research/GitHub/preprocessing/convlstm/Filled Rolling Data/X_train_rolling_filled_final.npy", "rb") as f:
+with open("/home/ubuntu/seaice/data/X_train_rolling_filled_final.npy", "rb") as f:
 	X_train = np.load(f)
-with open("/umbc/xfs1/cybertrn/reu2021/team1/research/GitHub/preprocessing/convlstm/Filled Rolling Data/y_train_rolling_filled_final.npy", "rb") as f:
+with open("/home/ubuntu/seaice/data/y_train_rolling_filled_final.npy", "rb") as f:
 	y_train = np.load(f)
-with open("/umbc/xfs1/cybertrn/reu2021/team1/research/GitHub/preprocessing/convlstm/Filled Rolling Data/X_test_rolling_filled_final.npy", "rb") as f:
+with open("/home/ubuntu/seaice/data/X_test_rolling_filled_final.npy", "rb") as f:
 	X_test = np.load(f)
-with open("/umbc/xfs1/cybertrn/reu2021/team1/research/GitHub/preprocessing/convlstm/Filled Rolling Data/y_test_rolling_filled_final.npy", "rb") as f:
+with open("/home/ubuntu/seaice/data/y_test_rolling_filled_final.npy", "rb") as f:
 	y_test = np.load(f)
-with open("/umbc/xfs1/cybertrn/reu2021/team1/research/GitHub/modeling/y_land_mask_actual.npy", "rb") as f:
+with open("/home/ubuntu/seaice/data/y_land_mask_actual.npy", "rb") as f:
         y_land_mask = np.load(f)
-with open("/umbc/xfs1/cybertrn/reu2021/team1/research/GitHub/preprocessing/convlstm/y_extent_train_rolling_final.npy", "rb") as f:
+with open("/home/ubuntu/seaice/data/convlstm/y_extent_train_rolling_final.npy", "rb") as f:
         y_extent_train = np.load(f)
-with open("/umbc/xfs1/cybertrn/reu2021/team1/research/GitHub/preprocessing/convlstm/y_extent_test_rolling_final.npy", "rb") as f:
+with open("/home/ubuntu/seaice/data/convlstm/y_extent_test_rolling_final.npy", "rb") as f:
         y_extent_test = np.load(f)
 
 #reshape y_land_mask to 3 dimensions
 y_land_mask = y_land_mask.reshape(448, 304, 1)
 
-from sklearn.metrics import mean_squared_error
 # define a custom loss function, which apply a mask turning land values to 0 during the optimization process
 def custom_mse(y_true, y_pred):	
 	#apply the mask
@@ -293,7 +294,6 @@ with open("/umbc/xfs1/cybertrn/reu2021/team1/research/GitHub/evaluation/convlstm
 	np.save(f, y_extent_test)
 
 
-import matplotlib.pyplot as plt
 # Plot Loss (Image)
 plt.plot(history.history['image_output_loss'])
 plt.plot(history.history['val_image_output_loss'])
