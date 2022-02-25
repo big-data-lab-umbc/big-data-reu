@@ -29,7 +29,6 @@ with open("/home/ubuntu/seaice/data/y_land_mask_actual.npy", "rb") as f:
 
 X_train = X_train[0:200]
 y_train = y_train[0:200]
-y_land_mask = y_land_mask[0:200]
 
 #reshape y_land_mask to 3 dimensions
 y_land_mask = y_land_mask.reshape(448, 304, 1)
