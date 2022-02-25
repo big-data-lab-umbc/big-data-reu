@@ -283,7 +283,7 @@ early_stopping = keras.callbacks.EarlyStopping(patience=20, restore_best_weights
 print(X_train.shape, y_train.shape)
 
 history = convLSTM_multiout.fit(x=X_train, y=y_train,
-				epochs=2,
+				epochs=4,
 				batch_size=4,
 				validation_split=.2,
 				# sample_weight=image_sample_weights,
@@ -297,19 +297,19 @@ with open("/home/ubuntu/seaice/data/X_test_rolling_filled_final.npy", "rb") as f
 with open("/home/ubuntu/seaice/data/y_test_rolling_filled_final.npy", "rb") as f:
 	y_test = np.load(f)
 
-# image/exent output
-# predict training values
-image_train_preds = convLSTM_multiout.predict(X_train, batch_size=4)
+# # image/exent output
+# # predict training values
+# image_train_preds = convLSTM_multiout.predict(X_train, batch_size=4)
 
-# compare to actual training values
-image_train_rmse = math.sqrt(mean_squared_error(y_train.flatten(), image_train_preds.flatten()))
-# extent_train_rmse = math.sqrt(mean_squared_error(y_extent_train, extent_train_preds))
+# # compare to actual training values
+# image_train_rmse = math.sqrt(mean_squared_error(y_train.flatten(), image_train_preds.flatten()))
+# # extent_train_rmse = math.sqrt(mean_squared_error(y_extent_train, extent_train_preds))
 
-# #print RMSE and NRMSE
-print("Image Concentration Train RMSE: {} \nExtent Train RMSE:".format(image_train_rmse))
-print("Image Concentration Train NRMSE: {} \nExtent Train NRMSE:".format(image_train_rmse / np.mean(y_train)))
-print("Image Concentration Train NRMSE (std. dev): {} \nExtent Train NRMSE (std. dev):".format(image_train_rmse / np.std(y_train)))
-print("Image Train Prediction Shape: {} \nExtent Train Predictions Shape: ".format(image_train_preds.shape))
+# # #print RMSE and NRMSE
+# print("Image Concentration Train RMSE: {} \nExtent Train RMSE:".format(image_train_rmse))
+# print("Image Concentration Train NRMSE: {} \nExtent Train NRMSE:".format(image_train_rmse / np.mean(y_train)))
+# print("Image Concentration Train NRMSE (std. dev): {} \nExtent Train NRMSE (std. dev):".format(image_train_rmse / np.std(y_train)))
+# print("Image Train Prediction Shape: {} \nExtent Train Predictions Shape: ".format(image_train_preds.shape))
 
 #predict test values
 image_test_preds = convLSTM_multiout.predict(X_test, batch_size=4)
@@ -324,17 +324,6 @@ print("Image Concentration Test NRMSE: {} \nExtent Test NRMSE: ".format(image_te
 print("Image Concentration Test NRMSE (std. dev): {} \nExtent Test NRMSE (std. dev): ".format(image_test_rmse / np.std(y_test)))
 print("Image Test Prediction Shape: {} \nExtent Test Predictions Shape: ".format(image_test_preds.shape))
 
-# save image/extent outputs:
-with open("/umbc/xfs1/cybertrn/reu2021/team1/research/GitHub/evaluation/convlstm/multiout_filled_convlstm_image_rolling_preds.npy", "wb") as f:
-	np.save(f, image_test_preds)
-with open("/umbc/xfs1/cybertrn/reu2021/team1/research/GitHub/evaluation/convlstm/multiout_filled_convlstm_image_rolling_actual.npy", "wb") as f:
-	np.save(f, y_test)
-# with open("/umbc/xfs1/cybertrn/reu2021/team1/research/GitHub/evaluation/convlstm/multiout_filled_convlstm_extent_rolling_preds.npy", "wb") as f:
-# 	np.save(f, extent_test_preds)
-# with open("/umbc/xfs1/cybertrn/reu2021/team1/research/GitHub/evaluation/convlstm/multiout_filled_convlstm_extent_rolling_actual.npy", "wb") as f:
-# 	np.save(f, y_extent_test)
-
-
 # Plot Loss (Image)
 plt.plot(history.history['image_output_loss'])
 plt.plot(history.history['val_image_output_loss'])
@@ -343,6 +332,17 @@ plt.xlabel('Epoch')
 plt.ylabel('Masked MSE')
 plt.legend(['Train', 'Validation'], loc='upper left')
 plt.savefig('Multiout_Filled_Rolling_Image_ConvLSTM_Loss_Plot.png')
+
+# save image/extent outputs:
+with open("./multiout_filled_convlstm_image_rolling_preds.npy", "wb") as f:
+	np.save(f, image_test_preds)
+with open("./multiout_filled_convlstm_image_rolling_actual.npy", "wb") as f:
+	np.save(f, y_test)
+# with open("/umbc/xfs1/cybertrn/reu2021/team1/research/GitHub/evaluation/convlstm/multiout_filled_convlstm_extent_rolling_preds.npy", "wb") as f:
+# 	np.save(f, extent_test_preds)
+# with open("/umbc/xfs1/cybertrn/reu2021/team1/research/GitHub/evaluation/convlstm/multiout_filled_convlstm_extent_rolling_actual.npy", "wb") as f:
+# 	np.save(f, y_extent_test)
+
 
 # # Plot Loss (Extent)
 # plt.clf()
