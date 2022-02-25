@@ -283,7 +283,7 @@ early_stopping = keras.callbacks.EarlyStopping(patience=20, restore_best_weights
 print(X_train.shape, y_train.shape)
 
 history = convLSTM_multiout.fit(x=X_train, y=y_train,
-				epochs=4,
+				epochs=3,
 				batch_size=4,
 				validation_split=.2,
 				# sample_weight=image_sample_weights,
