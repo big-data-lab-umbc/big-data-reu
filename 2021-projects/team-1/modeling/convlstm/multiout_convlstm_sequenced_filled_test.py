@@ -71,7 +71,7 @@ LAYER_NORM_EPS = 1e-6
 # NUM_LAYERS = 8
 
 PROJECTION_DIM = 64
-NUM_HEADS = 8
+NUM_HEADS = 4
 NUM_LAYERS = 4
 
 class TubeletEmbedding(layers.Layer):
@@ -287,8 +287,8 @@ early_stopping = keras.callbacks.EarlyStopping(patience=20, restore_best_weights
 print(X_train.shape, y_train.shape)
 
 history = convLSTM_multiout.fit(x=X_train, y=y_train,
-				epochs=20,
-				batch_size=4,
+				epochs=2,
+				batch_size=32,
 				validation_split=.2,
 				# sample_weight=image_sample_weights,
 				callbacks=[early_stopping])
@@ -319,7 +319,7 @@ print("Image Concentration Train NRMSE (std. dev): {} \nExtent Train NRMSE (std.
 print("Image Train Prediction Shape: {} \nExtent Train Predictions Shape: ".format(image_train_preds.shape))
 
 #predict test values
-image_test_preds = convLSTM_multiout.predict(X_test, batch_size=4)
+image_test_preds = convLSTM_multiout.predict(X_test, batch_size=32)
 
 #compare to actual test values
 image_test_rmse = math.sqrt(mean_squared_error(y_test.flatten(), image_test_preds.flatten()))
