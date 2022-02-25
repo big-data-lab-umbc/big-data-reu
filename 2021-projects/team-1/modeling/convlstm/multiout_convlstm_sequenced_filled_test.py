@@ -27,11 +27,11 @@ with open("/home/ubuntu/seaice/data/y_land_mask_actual.npy", "rb") as f:
 # with open("/home/ubuntu/seaice/data/y_extent_test_rolling_final.npy", "rb") as f:
 #         y_extent_test = np.load(f)
 
-X_train = X_train[0:200]
-y_train = y_train[0:200]
-
 #reshape y_land_mask to 3 dimensions
 y_land_mask = y_land_mask.reshape(448, 304, 1)
+
+X_train = X_train[0:100]
+y_train = y_train[0:100]
 
 # define a custom loss function, which apply a mask turning land values to 0 during the optimization process
 def custom_mse(y_true, y_pred):	
@@ -71,7 +71,7 @@ LAYER_NORM_EPS = 1e-6
 # NUM_LAYERS = 8
 
 PROJECTION_DIM = 64
-NUM_HEADS = 4
+NUM_HEADS = 8
 NUM_LAYERS = 4
 
 class TubeletEmbedding(layers.Layer):
@@ -272,9 +272,8 @@ print(convLSTM_multiout.summary())
 # define loss weights for both branches
 # extent_sample_weights = np.ones(len(y_extent_train))
 # extent_sample_weights[9::12] = 1.2
-image_sample_weights = np.ones(shape=(len(y_train),))
+image_sample_weights = np.ones(len(y_train))
 image_sample_weights[9::12] = 1.2
-print(':image_sample_weights.shape:', image_sample_weights.shape)
 
 # define early stopping callback
 early_stopping = keras.callbacks.EarlyStopping(patience=20, restore_best_weights=True)
@@ -287,8 +286,8 @@ early_stopping = keras.callbacks.EarlyStopping(patience=20, restore_best_weights
 print(X_train.shape, y_train.shape)
 
 history = convLSTM_multiout.fit(x=X_train, y=y_train,
-				epochs=2,
-				batch_size=32,
+				epochs=3,
+				batch_size=4,
 				validation_split=.2,
 				# sample_weight=image_sample_weights,
 				callbacks=[early_stopping])
@@ -301,25 +300,24 @@ with open("/home/ubuntu/seaice/data/X_test_rolling_filled_final.npy", "rb") as f
 with open("/home/ubuntu/seaice/data/y_test_rolling_filled_final.npy", "rb") as f:
 	y_test = np.load(f)
 
-X_test = X_test[0:200]
-y_test = y_test[0:200]
+X_test = X_test[0:100]
+y_test = y_test[0:100]
+# # image/exent output
+# # predict training values
+# image_train_preds = convLSTM_multiout.predict(X_train, batch_size=4)
 
-# image/exent output
-# predict training values
-image_train_preds = convLSTM_multiout.predict(X_train, batch_size=4)
+# # compare to actual training values
+# image_train_rmse = math.sqrt(mean_squared_error(y_train.flatten(), image_train_preds.flatten()))
+# # extent_train_rmse = math.sqrt(mean_squared_error(y_extent_train, extent_train_preds))
 
-# compare to actual training values
-image_train_rmse = math.sqrt(mean_squared_error(y_train.flatten(), image_train_preds.flatten()))
-# extent_train_rmse = math.sqrt(mean_squared_error(y_extent_train, extent_train_preds))
-
-# #print RMSE and NRMSE
-print("Image Concentration Train RMSE: {} \nExtent Train RMSE:".format(image_train_rmse))
-print("Image Concentration Train NRMSE: {} \nExtent Train NRMSE:".format(image_train_rmse / np.mean(y_train)))
-print("Image Concentration Train NRMSE (std. dev): {} \nExtent Train NRMSE (std. dev):".format(image_train_rmse / np.std(y_train)))
-print("Image Train Prediction Shape: {} \nExtent Train Predictions Shape: ".format(image_train_preds.shape))
+# # #print RMSE and NRMSE
+# print("Image Concentration Train RMSE: {} \nExtent Train RMSE:".format(image_train_rmse))
+# print("Image Concentration Train NRMSE: {} \nExtent Train NRMSE:".format(image_train_rmse / np.mean(y_train)))
+# print("Image Concentration Train NRMSE (std. dev): {} \nExtent Train NRMSE (std. dev):".format(image_train_rmse / np.std(y_train)))
+# print("Image Train Prediction Shape: {} \nExtent Train Predictions Shape: ".format(image_train_preds.shape))
 
 #predict test values
-image_test_preds = convLSTM_multiout.predict(X_test, batch_size=32)
+image_test_preds = convLSTM_multiout.predict(X_test, batch_size=4)
 
 #compare to actual test values
 image_test_rmse = math.sqrt(mean_squared_error(y_test.flatten(), image_test_preds.flatten()))
@@ -331,20 +329,7 @@ print("Image Concentration Test NRMSE: {} \nExtent Test NRMSE: ".format(image_te
 print("Image Concentration Test NRMSE (std. dev): {} \nExtent Test NRMSE (std. dev): ".format(image_test_rmse / np.std(y_test)))
 print("Image Test Prediction Shape: {} \nExtent Test Predictions Shape: ".format(image_test_preds.shape))
 
-# save image/extent outputs:
-with open("/umbc/xfs1/cybertrn/reu2021/team1/research/GitHub/evaluation/convlstm/multiout_filled_convlstm_image_rolling_preds.npy", "wb") as f:
-	np.save(f, image_test_preds)
-with open("/umbc/xfs1/cybertrn/reu2021/team1/research/GitHub/evaluation/convlstm/multiout_filled_convlstm_image_rolling_actual.npy", "wb") as f:
-	np.save(f, y_test)
-# with open("/umbc/xfs1/cybertrn/reu2021/team1/research/GitHub/evaluation/convlstm/multiout_filled_convlstm_extent_rolling_preds.npy", "wb") as f:
-# 	np.save(f, extent_test_preds)
-# with open("/umbc/xfs1/cybertrn/reu2021/team1/research/GitHub/evaluation/convlstm/multiout_filled_convlstm_extent_rolling_actual.npy", "wb") as f:
-# 	np.save(f, y_extent_test)
-
-
 # Plot Loss (Image)
-# plt.plot(history.history['image_output_loss'])
-# plt.plot(history.history['val_image_output_loss'])
 plt.plot(history.history['loss'])
 plt.plot(history.history['val_loss'])
 plt.title('Multi Output Model Loss (Image)')
@@ -352,6 +337,17 @@ plt.xlabel('Epoch')
 plt.ylabel('Masked MSE')
 plt.legend(['Train', 'Validation'], loc='upper left')
 plt.savefig('Multiout_Filled_Rolling_Image_ConvLSTM_Loss_Plot.png')
+
+# save image/extent outputs:
+with open("./multiout_filled_convlstm_image_rolling_preds.npy", "wb") as f:
+	np.save(f, image_test_preds)
+with open("./multiout_filled_convlstm_image_rolling_actual.npy", "wb") as f:
+	np.save(f, y_test)
+# with open("/umbc/xfs1/cybertrn/reu2021/team1/research/GitHub/evaluation/convlstm/multiout_filled_convlstm_extent_rolling_preds.npy", "wb") as f:
+# 	np.save(f, extent_test_preds)
+# with open("/umbc/xfs1/cybertrn/reu2021/team1/research/GitHub/evaluation/convlstm/multiout_filled_convlstm_extent_rolling_actual.npy", "wb") as f:
+# 	np.save(f, y_extent_test)
+
 
 # # Plot Loss (Extent)
 # plt.clf()
