@@ -344,8 +344,10 @@ with open("/umbc/xfs1/cybertrn/reu2021/team1/research/GitHub/evaluation/convlstm
 
 
 # Plot Loss (Image)
-plt.plot(history.history['image_output_loss'])
-plt.plot(history.history['val_image_output_loss'])
+# plt.plot(history.history['image_output_loss'])
+# plt.plot(history.history['val_image_output_loss'])
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
 plt.title('Multi Output Model Loss (Image)')
 plt.xlabel('Epoch')
 plt.ylabel('Masked MSE')

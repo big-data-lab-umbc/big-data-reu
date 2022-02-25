@@ -325,8 +325,8 @@ print("Image Concentration Test NRMSE (std. dev): {} \nExtent Test NRMSE (std. d
 print("Image Test Prediction Shape: {} \nExtent Test Predictions Shape: ".format(image_test_preds.shape))
 
 # Plot Loss (Image)
-plt.plot(history.history['image_output_loss'])
-plt.plot(history.history['val_image_output_loss'])
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
 plt.title('Multi Output Model Loss (Image)')
 plt.xlabel('Epoch')
 plt.ylabel('Masked MSE')
