@@ -27,6 +27,9 @@ with open("/home/ubuntu/seaice/data/y_land_mask_actual.npy", "rb") as f:
 # with open("/home/ubuntu/seaice/data/y_extent_test_rolling_final.npy", "rb") as f:
 #         y_extent_test = np.load(f)
 
+X_train = X_train[0:100]
+y_train = y_train[0:100]
+
 #reshape y_land_mask to 3 dimensions
 y_land_mask = y_land_mask.reshape(448, 304, 1)
 
@@ -297,6 +300,9 @@ with open("/home/ubuntu/seaice/data/X_test_rolling_filled_final.npy", "rb") as f
 	X_test = np.load(f)
 with open("/home/ubuntu/seaice/data/y_test_rolling_filled_final.npy", "rb") as f:
 	y_test = np.load(f)
+
+X_test = X_test[0:10]
+y_test = y_test[0:10]
 
 # # image/exent output
 # # predict training values
