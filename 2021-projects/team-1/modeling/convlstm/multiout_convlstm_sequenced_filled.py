@@ -121,6 +121,7 @@ def create_branch(inputs,
     encoded_patches = positional_encoder(patches)
 
     # Create multiple layers of the Transformer block.
+    print("transformer_layers:", transformer_layers)
     for _ in range(transformer_layers):
         # Layer normalization and MHSA
         x1 = layers.LayerNormalization(epsilon=1e-6)(encoded_patches)
@@ -196,69 +197,69 @@ transformer_model = create_transformer(
 
 # make multi output model
 # define model class
-class MultiOutputConvLSTM():
-	# this convlstm contains two branches, one predicting SIC with images, and one predicting sea ice extent.
-	def make_default_hidden_layers(self, inputs):
-	# this method makes the default hidden layers, which both branches of the network will utilize
-	# ConvLSTM2d -> MaxPooling3D -> ConvLSTM2D -> Conv2D -> Flatten -> Dense
-		# x = keras.layers.ConvLSTM2D(8, (5,5), padding="same", return_sequences=False)(inputs)
-		# x = keras.layers.MaxPooling2D((4, 4))(x)
-		# x = keras.layers.Conv2D(128, (5,5), activation="relu")(x)
-		# x = keras.layers.MaxPooling2D((4,4))(x)
-		# x = keras.layers.Conv2D(32, (5,5), activation="relu")(x)
-		# x = keras.layers.Flatten()(x)
-		# x = transformer_v(inputs)
-		x = keras.layers.Dense(256, activation="relu")(inputs)
-		return x
+# class MultiOutputConvLSTM():
+# 	# this convlstm contains two branches, one predicting SIC with images, and one predicting sea ice extent.
+# 	def make_default_hidden_layers(self, inputs):
+# 	# this method makes the default hidden layers, which both branches of the network will utilize
+# 	# ConvLSTM2d -> MaxPooling3D -> ConvLSTM2D -> Conv2D -> Flatten -> Dense
+# 		# x = keras.layers.ConvLSTM2D(8, (5,5), padding="same", return_sequences=False)(inputs)
+# 		# x = keras.layers.MaxPooling2D((4, 4))(x)
+# 		# x = keras.layers.Conv2D(128, (5,5), activation="relu")(x)
+# 		# x = keras.layers.MaxPooling2D((4,4))(x)
+# 		# x = keras.layers.Conv2D(32, (5,5), activation="relu")(x)
+# 		# x = keras.layers.Flatten()(x)
+# 		# x = transformer_v(inputs)
+# 		x = keras.layers.Dense(256, activation="relu")(inputs)
+# 		return x
 
-	def build_image_branch(self, inputs):
-	# build the branch for image output
-	# Dense Layer -> Reshape into image
-		x = self.make_default_hidden_layers(inputs)
-		x = keras.layers.Dense(512, activation="relu")(x)
-		x = keras.layers.Dense(1024, activation="relu")(x)
-		x = keras.layers.Dense(448*304, activation = "linear")(x)
-		image_output = keras.layers.Reshape((448, 304, 1), input_shape=(448*304,), name="image_output")(x)
-		return image_output
+# 	def build_image_branch(self, inputs):
+# 	# build the branch for image output
+# 	# Dense Layer -> Reshape into image
+# 		x = self.make_default_hidden_layers(inputs)
+# 		x = keras.layers.Dense(512, activation="relu")(x)
+# 		x = keras.layers.Dense(1024, activation="relu")(x)
+# 		x = keras.layers.Dense(448*304, activation = "linear")(x)
+# 		image_output = keras.layers.Reshape((448, 304, 1), input_shape=(448*304,), name="image_output")(x)
+# 		return image_output
 
-	def build_extent_branch(self, inputs):
-	# build branch for univariate sea ice extent prediction
-	# Dense -> Dense -> Dense -> Output
-		x = self.make_default_hidden_layers(inputs)
-		x = keras.layers.Dense(128, activation="relu")(x)
-		x = keras.layers.Dense(32, activation="relu")(x)
-		x = keras.layers.Dense(8, activation="relu")(x)
-		extent_output = keras.layers.Dense(1, activation="linear", name="extent_output")(x)
-		return extent_output
+# 	def build_extent_branch(self, inputs):
+# 	# build branch for univariate sea ice extent prediction
+# 	# Dense -> Dense -> Dense -> Output
+# 		x = self.make_default_hidden_layers(inputs)
+# 		x = keras.layers.Dense(128, activation="relu")(x)
+# 		x = keras.layers.Dense(32, activation="relu")(x)
+# 		x = keras.layers.Dense(8, activation="relu")(x)
+# 		extent_output = keras.layers.Dense(1, activation="linear", name="extent_output")(x)
+# 		return extent_output
 
-	def assemble_full_model(self, time_steps, width, height, features):
-	# put it all together
-		input_shape = (time_steps, width, height, features)
-		#Spatio-temporal model input
-		inputs = keras.layers.Input(shape=input_shape)
+# 	def assemble_full_model(self, time_steps, width, height, features):
+# 	# put it all together
+# 		input_shape = (time_steps, width, height, features)
+# 		#Spatio-temporal model input
+# 		inputs = keras.layers.Input(shape=input_shape)
 
-		# build image and extent output branches
-		image_branch = self.build_image_branch(inputs)
-		extent_branch = self.build_extent_branch(inputs)
+# 		# build image and extent output branches
+# 		image_branch = self.build_image_branch(inputs)
+# 		extent_branch = self.build_extent_branch(inputs)
 		
-		# initialize model: accepts input data, land mask, and actual values as input.
-		# only input data is fed to the model - other data is used to calculate masked loss
-		# outputs are an image of SIC for all pixels and a single sea ice extent value per month
-		model = keras.models.Model(inputs=inputs,
-					outputs=[image_branch, extent_branch],
-					name="sea_ice_net")		
-		# compile model
-		# optimized with Adam, image output uses custom loss, and extent output uses mse loss
-		# RMSE for both outputs is measured
-		model.compile(optimizer="adamax", 
-			loss={
-			"image_output": custom_mse,
-			"extent_output": "mse"},
-			metrics={
-			"image_output": keras.metrics.RootMeanSquaredError(),
-			"extent_output": keras.metrics.RootMeanSquaredError()})		
-		# add custom loss function to the model
-		return model
+# 		# initialize model: accepts input data, land mask, and actual values as input.
+# 		# only input data is fed to the model - other data is used to calculate masked loss
+# 		# outputs are an image of SIC for all pixels and a single sea ice extent value per month
+# 		model = keras.models.Model(inputs=inputs,
+# 					outputs=[image_branch, extent_branch],
+# 					name="sea_ice_net")		
+# 		# compile model
+# 		# optimized with Adam, image output uses custom loss, and extent output uses mse loss
+# 		# RMSE for both outputs is measured
+# 		model.compile(optimizer="adamax", 
+# 			loss={
+# 			"image_output": custom_mse,
+# 			"extent_output": "mse"},
+# 			metrics={
+# 			"image_output": keras.metrics.RootMeanSquaredError(),
+# 			"extent_output": keras.metrics.RootMeanSquaredError()})		
+# 		# add custom loss function to the model
+# 		return model
 
 # contstruct model from class
 # convLSTM_multiout = MultiOutputConvLSTM().assemble_full_model(12, 448, 304, 10)
