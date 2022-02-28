@@ -1,0 +1,26 @@
+
+The following have been reloaded with a version change:
+  1) GCCcore/7.3.0 => GCCcore/8.2.0
+  2) binutils/2.30-GCCcore-7.3.0 => binutils/2.31.1-GCCcore-8.2.0
+  3) bzip2/1.0.6-GCCcore-7.3.0 => bzip2/1.0.6-GCCcore-8.2.0
+  4) iccifort/2020.4.304 => iccifort/2019.1.144-GCC-8.2.0-2.31.1
+  5) iimpi/2020b => iimpi/2019a
+  6) imkl/2020.4.304-iimpi-2020b => imkl/2019.1.144-iimpi-2019a
+  7) impi/2019.9.304-iccifort-2020.4.304 => impi/2018.4.274-iccifort-2019.1.144-GCC-8.2.0-2.31.1
+  8) intel/2020b => intel/2019a
+  9) ncurses/6.1-GCCcore-7.3.0 => ncurses/6.1-GCCcore-8.2.0
+
+2022-02-23 11:25:11.652838: I tensorflow/stream_executor/platform/default/dso_loader.cc:48] Successfully opened dynamic library libcudart.so.10.1
+2022-02-23 11:26:50.257711: I tensorflow/stream_executor/platform/default/dso_loader.cc:48] Successfully opened dynamic library libcuda.so.1
+2022-02-23 11:26:50.358209: E tensorflow/stream_executor/cuda/cuda_driver.cc:314] failed call to cuInit: CUDA_ERROR_NO_DEVICE: no CUDA-capable device is detected
+2022-02-23 11:26:50.358244: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:156] kernel driver does not appear to be running on this host (cnode002): /proc/driver/nvidia/version does not exist
+2022-02-23 11:26:50.384016: I tensorflow/core/platform/profile_utils/cpu_utils.cc:104] CPU Frequency: 2300000000 Hz
+2022-02-23 11:26:50.386322: I tensorflow/compiler/xla/service/service.cc:168] XLA service 0x4631fc0 initialized for platform Host (this does not guarantee that XLA will be used). Devices:
+2022-02-23 11:26:50.386361: I tensorflow/compiler/xla/service/service.cc:176]   StreamExecutor device (0): Host, Default Version
+WARNING:tensorflow:From /usr/cluster/contrib/Python/3.7.6-intel-2019a-2018/lib/python3.7/site-packages/tensorflow/python/training/tracking/tracking.py:111: Model.state_updates (from tensorflow.python.keras.engine.training) is deprecated and will be removed in a future version.
+Instructions for updating:
+This property should not be used in TensorFlow 2.0, as updates are applied automatically.
+2022-02-24 12:52:50.759263: W tensorflow/python/util/util.cc:348] Sets are not currently considered sequences, but this may change in the future, so consider avoiding using them.
+WARNING:tensorflow:From /usr/cluster/contrib/Python/3.7.6-intel-2019a-2018/lib/python3.7/site-packages/tensorflow/python/training/tracking/tracking.py:111: Layer.updates (from tensorflow.python.keras.engine.base_layer) is deprecated and will be removed in a future version.
+Instructions for updating:
+This property should not be used in TensorFlow 2.0, as updates are applied automatically.
