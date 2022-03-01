@@ -3,7 +3,6 @@ import numpy as np
 import tensorflow as tf
 from tensorflow import keras 
 from tensorflow.compat.v1.keras import backend as K
-from sklearn.preprocessing import MinMaxScaler
 from tensorflow.keras import layers
 from sklearn.metrics import mean_squared_error
 import matplotlib.pyplot as plt

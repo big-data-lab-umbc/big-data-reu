@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=convlstm
+#SBATCH --job-name=transformconvlstm
 #SBATCH --output=slurm.transform_%x_%j_%u.convlstm_sequenced_filled.out
 #SBATCH --error=slurm.transform_%x_%j_%u.convlstm_sequenced_filled.err
 #SBATCH --partition=high_mem
