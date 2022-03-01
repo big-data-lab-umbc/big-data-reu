@@ -1,5 +1,4 @@
 import math
-import pandas as pd
 import numpy as np
 import tensorflow as tf
 from tensorflow import keras 
@@ -129,9 +128,9 @@ convLSTM_image = create_convLSTM_image()
 print(convLSTM_image.summary())
 history2 = convLSTM_image.fit(x=X_train, y=y_train,
 	batch_size=4,
-	epochs=1000,
+	epochs=10,
 	validation_split = .2,
-	sample_weight=sample_weight,
+	#sample_weight=sample_weight,
 	callbacks=[early_stopping])
 convLSTM_image.save("convLSTM_image")
 
