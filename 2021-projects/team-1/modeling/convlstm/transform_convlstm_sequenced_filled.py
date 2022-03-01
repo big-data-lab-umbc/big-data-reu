@@ -91,9 +91,9 @@ LAYER_NORM_EPS = 1e-6
 # NUM_HEADS = 8
 # NUM_LAYERS = 8
 
-PROJECTION_DIM = 128
+PROJECTION_DIM = 64
 NUM_HEADS = 8
-NUM_LAYERS = 8
+NUM_LAYERS = 4
 
 class TubeletEmbedding(layers.Layer):
     def __init__(self, embed_dim, patch_size, **kwargs):
