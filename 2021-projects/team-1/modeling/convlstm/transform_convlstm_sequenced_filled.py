@@ -17,18 +17,18 @@ with open("/umbc/xfs1/cybertrn/reu2021/team1/research/preprocessing/slurm/X_trai
         X_train = np.load(f)
 with open("/umbc/xfs1/cybertrn/reu2021/team1/research/preprocessing/slurm/y_train_rolling_filled_final.npy", "rb") as f:
         y_train = np.load(f)
-with open("/umbc/xfs1/cybertrn/reu2021/team1/research/preprocessing/slurm/X_test_rolling_filled_final.npy", "rb") as f:
-        X_test = np.load(f)
-with open("/umbc/xfs1/cybertrn/reu2021/team1/research/preprocessing/slurm/y_test_rolling_filled_final.npy", "rb") as f:
-        y_test = np.load(f)
+# with open("/umbc/xfs1/cybertrn/reu2021/team1/research/preprocessing/slurm/X_test_rolling_filled_final.npy", "rb") as f:
+#         X_test = np.load(f)
+# with open("/umbc/xfs1/cybertrn/reu2021/team1/research/preprocessing/slurm/y_test_rolling_filled_final.npy", "rb") as f:
+#         y_test = np.load(f)
 with open("/umbc/xfs1/cybertrn/reu2021/team1/research/preprocessing/y_land_mask_actual.npy", "rb") as f:
         y_land_mask = np.load(f)
-with open("/umbc/xfs1/cybertrn/reu2021/team1/research/preprocessing/slurm/y_extent_train_rolling_final.npy", "rb") as f:
-        y_extent_train = np.load(f)
-with open("/umbc/xfs1/cybertrn/reu2021/team1/research/preprocessing/slurm/y_extent_test_rolling_final.npy", "rb") as f:
-        y_extent_test = np.load(f)
-with open("/umbc/xfs1/cybertrn/reu2021/team1/research/plotting/real_ice_extents.npy", "rb") as f:
-        y_extent = np.load(f)
+# with open("/umbc/xfs1/cybertrn/reu2021/team1/research/preprocessing/slurm/y_extent_train_rolling_final.npy", "rb") as f:
+#         y_extent_train = np.load(f)
+# with open("/umbc/xfs1/cybertrn/reu2021/team1/research/preprocessing/slurm/y_extent_test_rolling_final.npy", "rb") as f:
+#         y_extent_test = np.load(f)
+# with open("/umbc/xfs1/cybertrn/reu2021/team1/research/plotting/real_ice_extents.npy", "rb") as f:
+#         y_extent = np.load(f)
 
 def custom_activation(inp):
         return tf.clip_by_value(tf.multiply(inp, y_land_mask), clip_value_min = 0.0, clip_value_max = 100.0)
@@ -304,6 +304,11 @@ print("Image Concentration Train RMSE: {}".format(image_train_rmse))
 print("Image Concentration Train NRMSE: {}".format(image_train_rmse / np.mean(y_train)))
 print("Image Concentration Train NRMSE (std. dev.): {}".format(image_train_rmse / np.std(y_train)))
 print("Train Prediction Shape: {}".format(image_train_preds.shape))
+
+with open("/umbc/xfs1/cybertrn/reu2021/team1/research/preprocessing/slurm/X_test_rolling_filled_final.npy", "rb") as f:
+        X_test = np.load(f)
+with open("/umbc/xfs1/cybertrn/reu2021/team1/research/preprocessing/slurm/y_test_rolling_filled_final.npy", "rb") as f:
+        y_test = np.load(f)
 
 image_test_preds = convLSTM_image.predict(X_test, batch_size=4)
 #image_test_mse, image_test_rmse = convLSTM_image.evaluate(X_test, y_test)
