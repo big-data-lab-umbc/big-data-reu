@@ -191,7 +191,7 @@ def create_transformer(
 	# Regression outputs.
     x = layers.Dense(256, activation="relu")(x)
     x = layers.Dense(512, activation="relu")(x)
-    x = layers.Dense(1024, activation="relu")(x)
+    # x = layers.Dense(1024, activation="relu")(x)
     x = layers.Dense(448*304, activation="linear")(x)
     image_output = layers.Reshape((448, 304, 1), input_shape = (448*304,), name="image_output")(x)
 
@@ -220,46 +220,46 @@ transformer_model = create_transformer(
 
 
 # define ConvLSTM model
-def create_convLSTM_image():
-	#add ConvLSTM layers
-	inputs = keras.layers.Input(shape=X_train.shape[1:])
-	x = keras.layers.ConvLSTM2D(16, (5,5), padding="same", return_sequences=False,
-		activation="relu", data_format = 'channels_last')(inputs)
-	#x = keras.layers.MaxPooling3D((2,2,2), padding='same')(x)
-	#x = keras.layers.BatchNormalization()(x)
-	#x = keras.layers.ConvLSTM2D(8, (5,5), padding="same", return_sequences=True, activation="relu", data_format = 'channels_last')(x)
-	#x = keras.layers.MaxPooling3D((2,2,2), padding='same')(x)
-	#x = keras.layers.BatchNormalization()(x)
-	#x = keras.layers.ConvLSTM2D(8, (5,5), padding="same", return_sequences=False, activation="relu", data_format = 'channels_last')(x)
-	x = keras.layers.MaxPooling2D((2,2), padding='same')(x)
-	#x = keras.layers.BatchNormalization()(x)
-	x = keras.layers.Conv2D(128, (5,5), padding="same", activation="relu")(x)
-	#x = keras.layers.MaxPooling2D((4,4), padding='same')(x)
-	#x = keras.layers.BatchNormalization()(x)
-	#x = keras.layers.Conv2D(128, (5,5), padding="same", activation="relu")(x)
-	x = keras.layers.MaxPooling2D((2,2), padding='same')(x)
-	#x = keras.layers.BatchNormalization()(x)
-	x = keras.layers.Conv2D(32, (5,5), padding="same", activation="relu")(x)
-	#x = keras.layers.MaxPooling2D((4,4), padding='same')(x)
-	#x = keras.layers.BatchNormalization()(x)
-	#x = keras.layers.Conv2D(32, (5,5), padding="same", activation="relu")(x)
-	x = keras.layers.Flatten()(x)
-	#x = keras.layers.BatchNormalization()(x)
-	x = keras.layers.Dense(256, activation="relu")(x)
-	#x = keras.layers.BatchNormalization()(x)
-	x = keras.layers.Dense(512, activation="relu")(x)
-	#x = keras.layers.BatchNormalization()(x)
-	x = keras.layers.Dense(448*304, activation="linear")(x)
-	sic_output = keras.layers.Reshape((448, 304, 1), input_shape = (448*304,))(x)
+# def create_convLSTM_image():
+# 	#add ConvLSTM layers
+# 	inputs = keras.layers.Input(shape=X_train.shape[1:])
+# 	x = keras.layers.ConvLSTM2D(16, (5,5), padding="same", return_sequences=False,
+# 		activation="relu", data_format = 'channels_last')(inputs)
+# 	#x = keras.layers.MaxPooling3D((2,2,2), padding='same')(x)
+# 	#x = keras.layers.BatchNormalization()(x)
+# 	#x = keras.layers.ConvLSTM2D(8, (5,5), padding="same", return_sequences=True, activation="relu", data_format = 'channels_last')(x)
+# 	#x = keras.layers.MaxPooling3D((2,2,2), padding='same')(x)
+# 	#x = keras.layers.BatchNormalization()(x)
+# 	#x = keras.layers.ConvLSTM2D(8, (5,5), padding="same", return_sequences=False, activation="relu", data_format = 'channels_last')(x)
+# 	x = keras.layers.MaxPooling2D((2,2), padding='same')(x)
+# 	#x = keras.layers.BatchNormalization()(x)
+# 	x = keras.layers.Conv2D(128, (5,5), padding="same", activation="relu")(x)
+# 	#x = keras.layers.MaxPooling2D((4,4), padding='same')(x)
+# 	#x = keras.layers.BatchNormalization()(x)
+# 	#x = keras.layers.Conv2D(128, (5,5), padding="same", activation="relu")(x)
+# 	x = keras.layers.MaxPooling2D((2,2), padding='same')(x)
+# 	#x = keras.layers.BatchNormalization()(x)
+# 	x = keras.layers.Conv2D(32, (5,5), padding="same", activation="relu")(x)
+# 	#x = keras.layers.MaxPooling2D((4,4), padding='same')(x)
+# 	#x = keras.layers.BatchNormalization()(x)
+# 	#x = keras.layers.Conv2D(32, (5,5), padding="same", activation="relu")(x)
+# 	x = keras.layers.Flatten()(x)
+# 	#x = keras.layers.BatchNormalization()(x)
+# 	x = keras.layers.Dense(256, activation="relu")(x)
+# 	#x = keras.layers.BatchNormalization()(x)
+# 	x = keras.layers.Dense(512, activation="relu")(x)
+# 	#x = keras.layers.BatchNormalization()(x)
+# 	x = keras.layers.Dense(448*304, activation="linear")(x)
+# 	sic_output = keras.layers.Reshape((448, 304, 1), input_shape = (448*304,))(x)
 
-        #input_mask = keras.layers.Input(shape=y_train_mask.shape[1:])
-        #loss_inp = keras.layers.Input(shape=y_train.shape[1:])
-	model = keras.models.Model(inputs=inputs,
-		outputs=sic_output,
-		name="SIC_net")
-        #compile model
-	model.compile(optimizer="adamax", loss=custom_mse, metrics=[keras.metrics.RootMeanSquaredError()])
-	return model
+#         #input_mask = keras.layers.Input(shape=y_train_mask.shape[1:])
+#         #loss_inp = keras.layers.Input(shape=y_train.shape[1:])
+# 	model = keras.models.Model(inputs=inputs,
+# 		outputs=sic_output,
+# 		name="SIC_net")
+#         #compile model
+# 	model.compile(optimizer="adamax", loss=custom_mse, metrics=[keras.metrics.RootMeanSquaredError()])
+# 	return model
 
 sample_weight = np.ones(shape=(len(y_train),))
 train_extent = calc_ice_extent(y_train)
