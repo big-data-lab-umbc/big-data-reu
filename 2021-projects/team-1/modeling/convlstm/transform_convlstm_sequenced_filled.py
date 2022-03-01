@@ -80,7 +80,7 @@ WEIGHT_DECAY = 1e-5
 EPOCHS = 10
 
 # TUBELET EMBEDDING
-PATCH_SIZE = (2, 8, 8)
+PATCH_SIZE = (4, 20, 15)
 NUM_PATCHES = (INPUT_SHAPE[0] // PATCH_SIZE[0]) ** 2
 print(INPUT_SHAPE[0] // PATCH_SIZE[0])
 print("NUM_PATCHES:", NUM_PATCHES)
@@ -93,7 +93,7 @@ LAYER_NORM_EPS = 1e-6
 
 PROJECTION_DIM = 64
 NUM_HEADS = 8
-NUM_LAYERS = 4
+NUM_LAYERS = 8
 
 class TubeletEmbedding(layers.Layer):
     def __init__(self, embed_dim, patch_size, **kwargs):
@@ -287,7 +287,7 @@ convLSTM_image = transformer_model
 print(convLSTM_image.summary())
 history2 = convLSTM_image.fit(x=X_train, y=y_train,
 	batch_size=4,
-	epochs=2,
+	epochs=1000,
 	validation_split = .2,
 	#sample_weight=sample_weight,
 	callbacks=[early_stopping])
