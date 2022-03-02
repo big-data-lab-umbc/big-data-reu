@@ -79,7 +79,7 @@ WEIGHT_DECAY = 1e-5
 EPOCHS = 10
 
 # TUBELET EMBEDDING
-PATCH_SIZE = (4, 20, 15)
+PATCH_SIZE = (4, 28, 19)
 NUM_PATCHES = (INPUT_SHAPE[0] // PATCH_SIZE[0]) ** 2
 print(INPUT_SHAPE[0] // PATCH_SIZE[0])
 print("NUM_PATCHES:", NUM_PATCHES)
@@ -92,7 +92,7 @@ LAYER_NORM_EPS = 1e-6
 
 PROJECTION_DIM = 64
 NUM_HEADS = 8
-NUM_LAYERS = 8
+NUM_LAYERS = 2
 
 class TubeletEmbedding(layers.Layer):
     def __init__(self, embed_dim, patch_size, **kwargs):
