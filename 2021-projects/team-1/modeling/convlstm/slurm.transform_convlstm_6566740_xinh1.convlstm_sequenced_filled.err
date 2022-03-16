@@ -1,0 +1,48 @@
+
+CommandNotFoundError: Your shell has not been properly configured to use 'conda activate'.
+To initialize your shell, run
+
+    $ conda init <SHELL_NAME>
+
+Currently supported shells are:
+  - bash
+  - fish
+  - tcsh
+  - xonsh
+  - zsh
+  - powershell
+
+See 'conda init --help' for more information and options.
+
+IMPORTANT: You may need to close and restart your shell after running 'conda init'.
+
+
+2022-03-01 01:36:01.605487: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcudart.so.11.0'; dlerror: libcudart.so.11.0: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /usr/ebuild/software/OpenBLAS/0.3.1-GCC-7.3.0-2.30/lib:/usr/ebuild/software/binutils/2.30-GCCcore-7.3.0/lib:/usr/ebuild/software/GCCcore/7.3.0/lib/gcc/x86_64-pc-linux-gnu/7.3.0:/usr/ebuild/software/GCCcore/7.3.0/lib64:/usr/ebuild/software/GCCcore/7.3.0/lib:/usr/ebuild/software/HDF/4.2.14-GCCcore-7.3.0/lib:/usr/ebuild/software/Szip/2.1.1-GCCcore-7.3.0/lib:/usr/ebuild/software/libjpeg-turbo/1.5.3-GCCcore-7.3.0/lib:/usr/ebuild/software/cURL/7.60.0-GCCcore-7.3.0/lib:/usr/ebuild/software/bzip2/1.0.6-GCCcore-7.3.0/lib:/usr/ebuild/software/ncurses/6.1-GCCcore-7.3.0/lib:/cm/shared/apps/slurm/current/lib64/slurm:/cm/shared/apps/slurm/current/lib64:/usr/ebuild/software/Java/1.8.0_181/lib:/usr/ebuild/software/imkl/2020.4.304-iimpi-2020b/mkl/lib/intel64:/usr/ebuild/software/imkl/2020.4.304-iimpi-2020b/lib/intel64:/usr/ebuild/software/impi/2019.9.304-iccifort-2020.4.304/intel64/libfabric/lib:/usr/ebuild/software/impi/2019.9.304-iccifort-2020.4.304/intel64/lib/release:/usr/ebuild/software/impi/2019.9.304-iccifort-2020.4.304/intel64/lib:/usr/ebuild/software/UCX/1.9.0-GCCcore-10.2.0/lib:/usr/ebuild/software/numactl/2.0.13-GCCcore-10.2.0/lib:/usr/ebuild/software/iccifort/2020.4.304/debugger_2020/libipt/intel64/lib:/usr/ebuild/software/iccifort/2020.4.304/compilers_and_libraries_2020.4.304/linux/tbb/lib/intel64/gcc4.8:/usr/ebuild/software/iccifort/2020.4.304/compilers_and_libraries_2020.4.304/linux/compiler/lib/intel64:/usr/ebuild/software/iccifort/2020.4.304/compilers_and_libraries_2020.4.304/linux/lib
+2022-03-01 01:36:01.605523: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
+Traceback (most recent call last):
+  File "transform_convlstm_sequenced_filled.py", line 6, in <module>
+    from sklearn.preprocessing import MinMaxScaler
+  File "/umbc/xfs1/cybertrn/common/Softwares/anaconda3/envs/py38-env/lib/python3.8/site-packages/sklearn/__init__.py", line 82, in <module>
+    from .base import clone
+  File "/umbc/xfs1/cybertrn/common/Softwares/anaconda3/envs/py38-env/lib/python3.8/site-packages/sklearn/base.py", line 17, in <module>
+    from .utils import _IS_32BIT
+  File "/umbc/xfs1/cybertrn/common/Softwares/anaconda3/envs/py38-env/lib/python3.8/site-packages/sklearn/utils/__init__.py", line 28, in <module>
+    from .fixes import np_version, parse_version
+  File "/umbc/xfs1/cybertrn/common/Softwares/anaconda3/envs/py38-env/lib/python3.8/site-packages/sklearn/utils/fixes.py", line 20, in <module>
+    import scipy.stats
+  File "/umbc/xfs1/cybertrn/common/Softwares/anaconda3/envs/py38-env/lib/python3.8/site-packages/scipy/stats/__init__.py", line 453, in <module>
+    from ._stats_py import *
+  File "/umbc/xfs1/cybertrn/common/Softwares/anaconda3/envs/py38-env/lib/python3.8/site-packages/scipy/stats/_stats_py.py", line 38, in <module>
+    from scipy.spatial.distance import cdist
+  File "/umbc/xfs1/cybertrn/common/Softwares/anaconda3/envs/py38-env/lib/python3.8/site-packages/scipy/spatial/__init__.py", line 107, in <module>
+    from ._procrustes import procrustes
+  File "/umbc/xfs1/cybertrn/common/Softwares/anaconda3/envs/py38-env/lib/python3.8/site-packages/scipy/spatial/_procrustes.py", line 9, in <module>
+    from scipy.linalg import orthogonal_procrustes
+  File "/umbc/xfs1/cybertrn/common/Softwares/anaconda3/envs/py38-env/lib/python3.8/site-packages/scipy/linalg/__init__.py", line 210, in <module>
+    from ._matfuncs import *
+  File "/umbc/xfs1/cybertrn/common/Softwares/anaconda3/envs/py38-env/lib/python3.8/site-packages/scipy/linalg/_matfuncs.py", line 21, in <module>
+t    from ._matfuncs_sqrtm import sqrtm
+  File "/umbc/xfs1/cybertrn/common/Softwares/anaconda3/envs/py38-env/lib/python3.8/site-packages/scipy/linalg/_matfuncs_sqrtm.py", line 24, in <module>
+    from ._matfuncs_sqrtm_triu import within_block_loop
+ImportError: /usr/ebuild/software/GCCcore/7.3.0/lib64/libstdc++.so.6: version `GLIBCXX_3.4.26' not found (required by /umbc/xfs1/cybertrn/common/Softwares/anaconda3/envs/py38-env/lib/python3.8/site-packages/scipy/linalg/_matfuncs_sqrtm_triu.cpython-38-x86_64-linux-gnu.so)
+srun: error: cnode006: task 0: Exited with exit code 1
