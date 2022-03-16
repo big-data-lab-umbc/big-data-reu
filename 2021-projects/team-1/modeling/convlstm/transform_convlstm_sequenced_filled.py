@@ -45,6 +45,12 @@ y_land_mask = y_land_mask.reshape(448, 304, 1)
 
 # define custom mse loss, which applies land mask to each output of the network.
 def custom_mse(y_true, y_pred):
+	print("y_true:", y_true)
+	print("y_pred:", y_pred)
+	#print("Max of y_pred: %.4f" % tf.reduce_max(y_pred))
+	#print("Min of y_pred: %.4f" % tf.reduce_min(y_pred))
+	#print("Mean of y_pred: %.4f" % tf.reduce_mean(y_pred))
+	#y_pred=tf.Print(y_pred, [y_pred], "print_yP-red")
 	y_pred_masked = tf.math.multiply(y_pred, y_land_mask)
 	y_true_masked = tf.math.multiply(y_true, y_land_mask)
 	squared_resids = tf.square(y_true_masked - y_pred_masked)
@@ -72,14 +78,14 @@ INPUT_SHAPE = (12, 448, 304, 10)
 NUM_CLASSES = 11
 
 # OPTIMIZER
-LEARNING_RATE = 1e-4
-WEIGHT_DECAY = 1e-5
+LEARNING_RATE = 0.01
+WEIGHT_DECAY = 1e-4
 
 # TRAINING
 EPOCHS = 10
 
 # TUBELET EMBEDDING
-PATCH_SIZE = (4, 28, 19)
+PATCH_SIZE = (1, 56, 38)
 NUM_PATCHES = (INPUT_SHAPE[0] // PATCH_SIZE[0]) ** 2
 print(INPUT_SHAPE[0] // PATCH_SIZE[0])
 print("NUM_PATCHES:", NUM_PATCHES)
@@ -91,7 +97,7 @@ LAYER_NORM_EPS = 1e-6
 # NUM_LAYERS = 8
 
 PROJECTION_DIM = 64
-NUM_HEADS = 8
+NUM_HEADS = 2
 NUM_LAYERS = 2
 
 class TubeletEmbedding(layers.Layer):
@@ -128,6 +134,20 @@ class PositionalEncoder(layers.Layer):
         encoded_tokens = encoded_tokens + encoded_positions
         return encoded_tokens
 
+def transformer_encoder(inputs, head_size, num_heads, ff_dim, dropout=0):
+    # Normalization and Attention
+    x = layers.LayerNormalization(epsilon=1e-6)(inputs)
+    x = layers.MultiHeadAttention(key_dim=head_size, num_heads=num_heads, dropout=dropout)(x, x)
+    x = layers.Dropout(dropout)(x)
+    res = x + inputs
+
+    # Feed Forward Part
+    x = layers.LayerNormalization(epsilon=1e-6)(res)
+    x = layers.Conv1D(filters=ff_dim, kernel_size=1, activation="relu")(x)
+    x = layers.Dropout(dropout)(x)
+    x = layers.Conv1D(filters=inputs.shape[-1], kernel_size=1)(x)
+    return x + res
+
 def create_branch(inputs,
 	tubelet_embedder,
     positional_encoder,
@@ -142,34 +162,42 @@ def create_branch(inputs,
     patches = tubelet_embedder(inputs)
     # Encode patches.
     encoded_patches = positional_encoder(patches)
-
-    # Create multiple layers of the Transformer block.
+    
+    # transformer encoder
+    dropout = 0.1
     for _ in range(transformer_layers):
-        # Layer normalization and MHSA
-        x1 = layers.LayerNormalization(epsilon=1e-6)(encoded_patches)
-        attention_output = layers.MultiHeadAttention(
-            num_heads=num_heads, key_dim=embed_dim // num_heads, dropout=0.1
-        )(x1, x1)
+        x = transformer_encoder(encoded_patches, 256, 4, 64, 0.1)
+    x = layers.GlobalAveragePooling1D(data_format="channels_first")(x)
+    return x
 
-        # Skip connection
-        x2 = layers.Add()([attention_output, encoded_patches])
+    ## Create multiple layers of the Transformer block.
+    #for _ in range(transformer_layers):
+    #    # Layer normalization and MHSA
+    #    x1 = layers.LayerNormalization(epsilon=1e-3)(encoded_patches)
+    #    attention_output = layers.MultiHeadAttention(
+    #        num_heads=num_heads, key_dim=embed_dim // num_heads, dropout=0.1
+    #    )(x1, x1)
 
-        # Layer Normalization and MLP
-        x3 = layers.LayerNormalization(epsilon=1e-6)(x2)
-        x3 = keras.Sequential(
-            [
-                layers.Dense(units=embed_dim * 4, activation=tf.nn.gelu),
-                layers.Dense(units=embed_dim, activation=tf.nn.gelu),
-            ]
-        )(x3)
+    #    # Skip connection
+    #    x2 = layers.Add()([attention_output, encoded_patches])
 
-        # Skip connection
-        encoded_patches = layers.Add()([x3, x2])
+    #    # Layer Normalization and MLP
+    #    x3 = layers.LayerNormalization(epsilon=1e-3)(x2)
+    #    x3 = keras.Sequential(
+    #        [
+    #            layers.Dense(units=embed_dim * 4, activation=tf.nn.relu),
+    #            layers.Dense(units=embed_dim, activation=tf.nn.relu),
+    #        ]
+    #    )(x3)
 
-    # Layer normalization and Global average pooling.
-    representation = layers.LayerNormalization(epsilon=layer_norm_eps)(encoded_patches)
-    representation = layers.GlobalAvgPool1D()(representation)
-    return representation
+    #   # Skip connection
+    #    encoded_patches = layers.Add()([x3, x2])
+
+    ## Layer normalization and Global average pooling.
+    ##representation = layers.LayerNormalization(epsilon=layer_norm_eps)(encoded_patches)
+    #representation = layers.LayerNormalization(epsilon=1e-3)(encoded_patches)
+    #representation = layers.GlobalAvgPool1D()(representation)
+    #return representation
 
 def create_transformer(
     tubelet_embedder,
@@ -204,6 +232,8 @@ def create_transformer(
 	# compile model
 	# optimized with Adam, image output uses custom loss, and extent output uses mse loss
 	# RMSE for both outputs is measured
+    #optimizer = keras.optimizers.Adam(lr=0.0001)
+    #model.run_eagerly = True
     model.compile(optimizer="adamax", 
 		loss= custom_mse,
 		metrics= [keras.metrics.RootMeanSquaredError()])		
@@ -279,21 +309,23 @@ def exp_decay(epoch, lr):
 learning_rate = keras.callbacks.LearningRateScheduler(exp_decay)
 '''
 
-early_stopping = keras.callbacks.EarlyStopping(patience=100, restore_best_weights=True)
+early_stopping = keras.callbacks.EarlyStopping(patience=200, restore_best_weights=True)
 
 # convLSTM_image = create_convLSTM_image()
 convLSTM_image = transformer_model
 print(convLSTM_image.summary())
 history2 = convLSTM_image.fit(x=X_train, y=y_train,
-	batch_size=4,
-	epochs=1000,
+	batch_size=8,
+	epochs=500,
 	validation_split = .2,
 	#sample_weight=sample_weight,
 	callbacks=[early_stopping])
 convLSTM_image.save("transform_convLSTM_image")
 
 # image output
-image_train_preds = convLSTM_image.predict(X_train, batch_size=4)
+image_train_preds = convLSTM_image.predict(X_train, batch_size=8)
+print("image_train_preds:", image_train_preds)
+print("y_train:", y_train)
 #image_train_mse, image_train_rmse = convLSTM_image.evaluate(X_train, y_train)
 
 #image_train_preds = (image_train_preds_norm * y_train.std()) + y_train.mean()
