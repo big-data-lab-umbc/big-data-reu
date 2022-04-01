@@ -6,6 +6,7 @@ from tensorflow.compat.v1.keras import backend as K
 from tensorflow.keras import layers
 from sklearn.metrics import mean_squared_error
 import matplotlib.pyplot as plt
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
 
 '''
 This document contains code for a ConvLSTM neural network predicting SIC per pixel and per month for spatio-temporal image data.
@@ -39,6 +40,17 @@ y_train_norm = (y_train - y_train.mean())/y_train.std()
 X_test_norm = (X_test - X_test.mean())/X_test.std()
 y_test_norm = (y_test - y_test.mean())/y_test.std()
 '''
+print("X_train.shape:", X_train.shape)
+print("X_train:", X_train)
+
+scaler_f = StandardScaler()
+X_train = scaler_f.fit_transform(X_train.reshape(-1, X_train.shape[4]))
+print("X_train after scale:", X_train)
+print("X_train.shape after scale:", X_train.shape)
+
+X_train = X_train.reshape(396, 12, 448, 304, 10)
+print("X_train after reshape:", X_train)
+print("X_train.shape after reshape:", X_train.shape)
 
 # reshape y_land_mask
 y_land_mask = y_land_mask.reshape(448, 304, 1)
@@ -98,7 +110,7 @@ LAYER_NORM_EPS = 1e-6
 
 PROJECTION_DIM = 256
 NUM_HEADS = 4
-NUM_LAYERS = 8
+NUM_LAYERS = 4
 
 class TubeletEmbedding(layers.Layer):
     def __init__(self, embed_dim, patch_size, **kwargs):
@@ -237,8 +249,9 @@ def create_transformer(
     #optimizer = keras.optimizers.Adam(lr=0.0001)
     #model.run_eagerly = True
     model.compile(optimizer="adamax", 
-		loss= custom_mse,
-		metrics= [keras.metrics.RootMeanSquaredError()])		
+		#loss= custom_mse,
+		loss="mse",
+		metrics= keras.metrics.RootMeanSquaredError())		
 	# add custom loss function to the model
     return model
 
@@ -311,15 +324,16 @@ def exp_decay(epoch, lr):
 learning_rate = keras.callbacks.LearningRateScheduler(exp_decay)
 '''
 
-early_stopping = keras.callbacks.EarlyStopping(patience=100, restore_best_weights=True)
+early_stopping = keras.callbacks.EarlyStopping(patience=200, restore_best_weights=True)
 
 # convLSTM_image = create_convLSTM_image()
 convLSTM_image = transformer_model
 print(convLSTM_image.summary())
 history2 = convLSTM_image.fit(x=X_train, y=y_train,
 	batch_size=4,
-	epochs=1000,
+	epochs=1500,
 	validation_split = .2,
+	shuffle=True,
 	#sample_weight=sample_weight,
 	callbacks=[early_stopping])
 convLSTM_image.save("transform_convLSTM_image")
@@ -342,6 +356,19 @@ with open("/umbc/xfs1/cybertrn/reu2021/team1/research/preprocessing/slurm/X_test
         X_test = np.load(f)
 with open("/umbc/xfs1/cybertrn/reu2021/team1/research/preprocessing/slurm/y_test_rolling_filled_final.npy", "rb") as f:
         y_test = np.load(f)
+
+print("X_test.shape:", X_test.shape)
+print("X_test:", X_test)
+test_num = X_test.shape[0]
+print("test_num:", test_num)
+
+X_test = scaler_f.transform(X_test.reshape(-1, X_test.shape[4]))
+print("X_test after scale:", X_test)
+print("X_test.shape after scale:", X_test.shape)
+
+X_test = X_test.reshape(test_num, 12, 448, 304, 10)
+print("X_test after reshape:", X_test)
+print("X_test.shape after reshape:", X_test.shape)
 
 image_test_preds = convLSTM_image.predict(X_test, batch_size=4)
 #image_test_mse, image_test_rmse = convLSTM_image.evaluate(X_test, y_test)
