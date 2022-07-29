@@ -1,0 +1,23 @@
+{
+    "root": "/umbc/xfs1/cybertrn/reu2022/team2/data/",
+    "filename": "150MeV_4-multi-kMU_triples_false_triples_dtot_shuffled_transformed.csv",
+    "learning_rate": "schedule.step",
+    "normalization": null,
+    "validation": 0.20,
+    "epochs": 68,
+    "batch_size": 8192,
+    "num_layers": 128,
+    "neurons": 256,
+    "dropout": 0.45,
+    "optimizer": "adam",
+    "momentum": 0.0,
+    "withmomentum": false,
+    "skip": 2,
+    "inter_activation": "leakyrelu",
+    "regularization": null,
+    "batch_normalization": false,
+    "scale": false,
+    "scale_block_repeat": 1,
+    "indim": 15,
+    "outdim": 13
+}
