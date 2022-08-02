@@ -4,7 +4,7 @@
 
 **Team Members:** Hannah Nguyen, Jorge Gonzalez, Kathryn Chen, Theodore Chapman, Logan Chambers
 
-**RA:** Seraj Mostafa
+**RA:** Seraj A.M. Mostafa
 
 **Mentor:** Dr. Jianwu Wang
 
