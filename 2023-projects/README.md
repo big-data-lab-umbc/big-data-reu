@@ -3,7 +3,7 @@ Title: Advances in Predicting Ice-Bed Topography Using Machine Learning: A Compr
 Team Members: Katherine Yi, Angelina Dewar, Tartela Tabassun, Jason Lu, Ray Chen
 
 
-RA: Homayra Alom
+RA: Homayra Alam
 
 Mentor: Dr. Jianwu Wang
 
