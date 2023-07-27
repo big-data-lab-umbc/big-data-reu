@@ -1,5 +1,5 @@
 
-Title: Advances in Predicting Ice-Bed Topography Using Machine Learning: A Comprehensive Review and Case Studies,"
+**Advances in Predicting Ice-Bed Topography Using Machine Learning: A Comprehensive Review and Case Studies**
 Team Members: Katherine Yi, Angelina Dewar, Tartela Tabassun, Jason Lu, Ray Chen
 
 
