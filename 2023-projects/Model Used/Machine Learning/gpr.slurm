@@ -1,3 +1,4 @@
+#This is for Taki running
 #!/bin/bash
 #SBATCH --job-name=gpr_full
 #SBATCH --partition=batch
