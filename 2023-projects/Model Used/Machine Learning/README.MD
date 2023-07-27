@@ -11,7 +11,7 @@ STGP.ipynb
   Velocity magnitude is computed to match final process for result comparison.
   Modeling was created and loss vs. Epoch was plotted.
   Then RMSE stat was obtained.
-  # 1201 Runs Out of Space with the Resources Exhausted Error.
+  1201 Runs Out of Space with the Resources Exhausted Error.
 
 
 VAE-XGBoost.ipynb
@@ -49,7 +49,6 @@ merging data.ipynb
 
 gpr.py
   python file to run Gaussian Processing on Taki.
-
 
 gpr.slurm
   To run the modeling on Taki environment.
