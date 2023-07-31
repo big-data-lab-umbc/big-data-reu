@@ -1,50 +1,51 @@
+Ablation Study
+Various models trained on Nearest Neighbors interpolation unless stated otherwise. 
+
 Keras VAE.ipynb
-  it creates a sampling layer and build encoder and decoder.
-  Then VAE is defined as model with custom train_step.
-  Data is obtained from CSV file and model is trained.
-  Model VAE with Nearest Neighbors Dataset is plotted.
+  The VAE creates a sampling layer and build encoder and decoder using Keras.
+  The encoder and decoder are defined with custom parameters for our dataset including number of independent variables. 
+  After data is preprocessed using the Nearest Neighbors interpolation, the model is trained.  
+  The model training averages about 40 minutes to train with a 60-40 train-test split.
+  Finally the trained model is applied to the test set to predict the test and validation data. Metrics are collected and the predictions are   plotted using matplotlib.
 
 
 STGP.ipynb
-  Spatio Temporal Gaussian Processing.
-  Data is cleaned by dropping duplicates.
-  Velocity magnitude is computed to match final process for result comparison.
-  Modeling was created and loss vs. Epoch was plotted.
-  Then RMSE stat was obtained.
-  1201 Runs Out of Space with the Resources Exhausted Error.
-
+  Spatio Temporal Gaussian Processing
+  After preprocessing the data, the spatio-temporal model is trained. 
+  Training time is greatly effected by the number of epochs trained. The example uses 15 epochs completing training in about 40 seconds. 
+  Next, loss was plotted. 
+  Testing and validation datasets were predicted. Metrics were collected. 
+  Unfortunately, the 1201 dataset encunters an out of space error due to the amount of memory needed to predict the large dataset. 
+  Because of this, there is no visual associated with the STGP. Further research with batching and more resources could prove to predict the 1201 dataset could show improved results.
 
 VAE-XGBoost.ipynb
-  Similar data processing as STGP.
-  VAE model was defined and trained.
-  XGB model was trained with combined xtrain and vae encoder feats.
-  1201x1201 data was validated.
-  Model VAE & XGB with Nearest Neighbors Dataset was plotted.
+  Building on the VAE previously defined, this project aimed to capitalize on the XGB model with the VAE predictions.
+  The encoded data from the VAE latent space would be used as an input to the XGB model which would then train on the compressed data. 
+  After training, the model would then predict the testing and validation data. Metrics were collected. 
+  Next, 1201x1201 data was predicted and metrics collected and plotted. 
 
+**XGBoost_Validation.ipynb**
+  XGBoost is the top performing model.
 
-XGBoost_Validation.ipynb
-  Data was obtained and cleaned like previous ipynb files.
-  XGB Regression model was defined and trained.
-  Model performance was evaluated by calculating RMSE stat.
-  Validation data (Predicted vs Actual) was plotted.
-  1201x1201 data was validated.
-  Plot density of 1201 vs physics model predictions was obtained.
-  1201 Validation data (Prediction vs Actual) was plotted.
+  Data was preprocessed according to the shared preprocessing steps. 
+  In ablation study 2, the XGB model was run on nearest neighbors, bilinear, and kriging interpolated dataets. 
 
+  The model was training in ~4 minutes for all training points. The model was then used to predict testing and validation data. RMSE, MAE, and R^2 were collected for these predctions. The predictions were then plotted against the known data. These predictions demonstrated the top metrics collected by any model in this experiment. Additionally, the metrics were improved from the previous physic-based model. 
+  KFold validation was applied to confirm results of the model.
+  Next, the model was applied to the 1201x1201 dataset were it would predict the entire 1.4m points. Metrics were collected here in comparison to the physics based 2014 model by Morlinghem. The predictions were also graphed as topography maps and density of predictions. 
+  Because of the impressive metrics of the XGBoost model, the terrain ruggedness index (TRI) was also computed for the XGBoost model to identify the amount of detail and roughness of the topography captured by the model. 
 
 derive_velocity.ipynb
-  Purpose: calculate the velocity magnitude of iceflow at (x,y)
+  Purpose: calculate the velocity magnitude of iceflow at (x,y) using basic magnitude equation. 
   Input: 
         data_full.csv
         df_1201_validation_data.csv 
   Output: 
         data_full_vMag.csv
         d1201_vMag.csv
-  Data was modified using np.sqrt.
-
 
 merging data.ipynb
-  train.csv, y_test.csv, and test.csv files were merged into data_full.csv.
+  train.csv, y_test.csv, and test.csv files were merged into data_full.csv which is the primary data source used throughout the various models. 
 
 
 gpr.py
