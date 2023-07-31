@@ -2,6 +2,7 @@ Ablation Study
 Various models trained on Nearest Neighbors interpolation unless stated otherwise. 
 
 Keras VAE.ipynb
+
   The VAE creates a sampling layer and build encoder and decoder using Keras.
   The encoder and decoder are defined with custom parameters for our dataset including number of independent variables. 
   After data is preprocessed using the Nearest Neighbors interpolation, the model is trained.  
@@ -10,6 +11,7 @@ Keras VAE.ipynb
 
 
 STGP.ipynb
+
   Spatio Temporal Gaussian Processing
   After preprocessing the data, the spatio-temporal model is trained. 
   Training time is greatly effected by the number of epochs trained. The example uses 15 epochs completing training in about 40 seconds. 
@@ -19,12 +21,14 @@ STGP.ipynb
   Because of this, there is no visual associated with the STGP. Further research with batching and more resources could prove to predict the 1201 dataset could show improved results.
 
 VAE-XGBoost.ipynb
+
   Building on the VAE previously defined, this project aimed to capitalize on the XGB model with the VAE predictions.
   The encoded data from the VAE latent space would be used as an input to the XGB model which would then train on the compressed data. 
   After training, the model would then predict the testing and validation data. Metrics were collected. 
   Next, 1201x1201 data was predicted and metrics collected and plotted. 
 
 **XGBoost_Validation.ipynb**
+
   XGBoost is the top performing model.
 
   Data was preprocessed according to the shared preprocessing steps. 
@@ -36,6 +40,7 @@ VAE-XGBoost.ipynb
   Because of the impressive metrics of the XGBoost model, the terrain ruggedness index (TRI) was also computed for the XGBoost model to identify the amount of detail and roughness of the topography captured by the model. 
 
 derive_velocity.ipynb
+
   Purpose: calculate the velocity magnitude of iceflow at (x,y) using basic magnitude equation. 
   Input: 
         data_full.csv
@@ -45,11 +50,14 @@ derive_velocity.ipynb
         d1201_vMag.csv
 
 merging data.ipynb
+
   train.csv, y_test.csv, and test.csv files were merged into data_full.csv which is the primary data source used throughout the various models. 
 
 
 gpr.py
+
   python file to run Gaussian Processing on Taki.
 
 gpr.slurm
+
   To run the modeling on Taki environment.
