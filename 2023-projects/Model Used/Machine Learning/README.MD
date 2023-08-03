@@ -9,17 +9,6 @@ Keras VAE.ipynb
   The model training averages about 40 minutes to train with a 60-40 train-test split.
   Finally the trained model is applied to the test set to predict the test and validation data. Metrics are collected and the predictions are   plotted using matplotlib.
 
-
-STGP.ipynb
-
-  Spatio Temporal Gaussian Processing
-  After preprocessing the data, the spatio-temporal model is trained. 
-  Training time is greatly effected by the number of epochs trained. The example uses 15 epochs completing training in about 40 seconds. 
-  Next, loss was plotted. 
-  Testing and validation datasets were predicted. Metrics were collected. 
-  Unfortunately, the 1201 dataset encunters an out of space error due to the amount of memory needed to predict the large dataset. 
-  Because of this, there is no visual associated with the STGP. Further research with batching and more resources could prove to predict the 1201 dataset could show improved results.
-
 VAE-XGBoost.ipynb
 
   Building on the VAE previously defined, this project aimed to capitalize on the XGB model with the VAE predictions.
@@ -51,13 +40,4 @@ derive_velocity.ipynb
 
 merging data.ipynb
 
-  train.csv, y_test.csv, and test.csv files were merged into data_full.csv which is the primary data source used throughout the various models. 
-
-
-gpr.py
-
-  python file to run Gaussian Processing on Taki.
-
-gpr.slurm
-
-  To run the modeling on Taki environment.
+  train.csv, y_test.csv, and test.csv files were merged into data_full.csv which is the primary data source used throughout the various models.
