@@ -1,5 +1,7 @@
 
-**Advances in Predicting Ice-Bed Topography Using Machine Learning: A Comprehensive Review and Case Studies**
+**Evaluating Machine Learning and Statistical Models
+
+for Greenland Bed Topography**
 
 Team Members: Katherine Yi, Angelina Dewar, Tartela Tabassun, Jason Lu, Ray Chen
 
