@@ -1,5 +1,7 @@
 
-# Universal Kriging First Pass Prediction
+#**Universal Kriging First Pass Prediction**
+
+## Universal Kriging First Pass Prediction
 
 The following contains code to perform purely spatial, first pass prediction for Universal Kriging on a particular slice of the total number of ground truth observations.
 
