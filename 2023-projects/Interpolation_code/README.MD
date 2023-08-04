@@ -1,32 +1,10 @@
-*Bilinear interpolation*: the goal is to estimate interpolated bedmachine value for each track pixel. It is the same process of doing bilinear interpolation for other variables.  
-Step 1: train RegularGridInterpolator based on surf_x, surf_y and bedmachine
-Step 2: use trained function to get interpolated bedmachine based on each track pixel's track_x and track_y 
 
-# **Interpolation using UK_Interpolation.py**
-## Introduction
-This guide provides step-by-step instructions on utilizing the `UK_Interpolation.py` script to perform Universal Kriging-based interpolation on individual features from the `hackathon.h5` dataset.
+# **Interpolation code**
+##Nearest Neighbor Interpolation:Nearest Neighbor Interpolation involved associating each radar bedrock observation with its spatially nearest surface observation.
 
-## Usage
-To perform interpolation for a single variable, follow these steps:
+##Bilinear Interpolation:Bilinear Interpolation predicted the value of each surface variable by calculating the weighted average of the four nearest neighbor observations of that variable. The weights of each neighbor were determined based on their distances from the prediction location.
 
-1. Download the `hackathon.h5` dataset and move it to the same directory as the code files.
-
-2. Open a terminal or command prompt.
-
-3. Navigate to the directory where the `UK_Interpolation.py` script is located.
-
-4. Run the following command, replacing `surf_vy` with the variable you wish to interpolate:
-python UK_Interpolation.py  surf_vy
-
-5. Upon completion, a file named `surf_vy.csv` will be generated.
-
-6. Repeat the above command for all five features (`surf_vx`, `surf_vy`, `surf_elv`, `surf_SMB`, and `surf_dhdt`).
-
-7. Combine the resulting CSV files' columns to obtain a consolidated CSV file containing the interpolated output for all surface features.
-
-Please note that you should execute steps 4 to 6 for each feature individually before combining the outputs.
-
-Remember that the Universal Kriging approach enhances the accuracy of interpolation by considering both spatial trends and correlations among the features.
+##Krining Interpolation:Universal Kriging incorporated all observations in the dataset (or a specified neighborhood due to memory constraints) to calculate a weighted average. For more inormation there is a separate readme file Universal Kriging interpolation. 
 
 
 
