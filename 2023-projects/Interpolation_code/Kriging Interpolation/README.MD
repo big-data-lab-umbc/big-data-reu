@@ -1,4 +1,4 @@
-# **Interpolation using UK_Interpolation.py**
+# **Interpolation using Universal Kriging**
 
 ## Introduction
 This guide provides step-by-step instructions on utilizing the `UK_Interpolation.py` script to perform Universal Kriging-based interpolation on individual features from the `hackathon.h5` dataset.
