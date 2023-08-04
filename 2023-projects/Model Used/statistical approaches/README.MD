@@ -1,5 +1,5 @@
 
-#**Statistical Approaches**
+# **Statistical Approaches**
 
 ## Universal Kriging First Pass Prediction
 
