@@ -1,6 +1,5 @@
 
-# **Evaluating Machine Learning and Statistical Models
-for Greenland Bed Topography***
+# **Evaluating Machine Learning and Statistical Models for Greenland Bed Topography***
 
 Team Members: Katherine Yi, Angelina Dewar, Tartela Tabassun, Jason Lu, Ray Chen
 
