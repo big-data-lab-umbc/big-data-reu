@@ -1,4 +1,4 @@
-# **XGBoost Model with average velocity**
+# **XGBoost Model with velocity magnitude**
 ## Variational Auto Encoder (VAE) with Keras Layers
 
   The VAE creates a sampling layer and build encoder and decoder using Keras.
