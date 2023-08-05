@@ -30,7 +30,3 @@
   Output: 
         data_full_vMag.csv
         d1201_vMag.csv
-
-merging data.ipynb
-
-  train.csv, y_test.csv, and test.csv files were merged into data_full.csv which is the primary data source used throughout the various models.
