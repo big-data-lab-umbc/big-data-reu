@@ -4,7 +4,7 @@
 Team Members: Katherine Yi, Angelina Dewar, Tartela Tabassun, Jason Lu, Ray Chen
 
 
-RA: Homayra Alam
+** RA: Homayra Alam
 
 Mentor: Dr. Jianwu Wang
 
