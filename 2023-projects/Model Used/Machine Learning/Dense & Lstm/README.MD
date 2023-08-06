@@ -1,4 +1,4 @@
-#** Dense and LSTM Based Model**
+# **Dense and LSTM Based Model**
 ## Dense layer based model
 
 The model is created based on standardizing the features and scales the target variable. It uses dense layers to predict ice bed topography.The model is trained with Nearest Neighbor interpolated data with physics based infusion of velocity. RMSE, MAE, R^2 are used to evaluate the model. Finally, the topography is visualized using a 2D plot. 
