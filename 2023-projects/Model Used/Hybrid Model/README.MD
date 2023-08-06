@@ -1,10 +1,10 @@
 # **Hybrid Model Approaches**
-## Dense+LSTM_With_NewPreprocessing.ipynb
--standardizes the features and scales the target variable
--uses Dense and LSTM layers to predict ice bed topography
--KNN MAG data used with the training
--Evaluates the model using RMSE, MAE, R^2
--Visualizes predictions as a 2D plot
+## Variational Auto Encoder (VAE) with XGBoost
+
+  Building on the VAE previously defined, this project aimed to capitalize on the XGB model with the VAE predictions.
+  The encoded data from the VAE latent space would be used as an input to the XGB model which would then train on the compressed data. 
+  After training, the model would then predict the testing and validation data. Metrics were collected. 
+  Next, 1201x1201 data was predicted and metrics collected and plotted. 
 
 ## LSTM+Dense layer based Model
 
