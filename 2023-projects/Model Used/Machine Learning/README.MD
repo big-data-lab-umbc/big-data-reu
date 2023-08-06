@@ -7,12 +7,9 @@
   The model training averages about 40 minutes to train with a 60-40 train-test split.
   Finally the trained model is applied to the test set to predict the test and validation data. Metrics are collected and the predictions are   plotted using matplotlib.
 
-## Variational Auto Encoder (VAE) with XGBoost
+## Dense layer based Model
 
-  Building on the VAE previously defined, this project aimed to capitalize on the XGB model with the VAE predictions.
-  The encoded data from the VAE latent space would be used as an input to the XGB model which would then train on the compressed data. 
-  After training, the model would then predict the testing and validation data. Metrics were collected. 
-  Next, 1201x1201 data was predicted and metrics collected and plotted. 
+The model is created based on standardizing the features and scales the target variable. It uses dense layers to predict ice bed topography.The model is trained with Nearest Neighbor interpolated data with physics based infusion of velocity. RMSE, MAE, R^2 are used to evaluate the model. Finally, the topography is visualized using a 2D plot. 
 
 ## Validation on the XGBOOST Model
   XGBoost is the top performing model. Data was preprocessed according to the shared preprocessing steps. 
