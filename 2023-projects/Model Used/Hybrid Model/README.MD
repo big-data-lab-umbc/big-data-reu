@@ -6,8 +6,7 @@
 -Evaluates the model using RMSE, MAE, R^2
 -Visualizes predictions as a 2D plot
 
-## Dense_+_LSTM_with_vMag_dataset.ipynb
-The full velocity magnitude csv is read in, cleaned, and split into a testing and training section. 
-The Dense + LSTM model is defined and trained. 
-The model creates predictions with each training and testing data and metrics are calculated. 
-The model creates a prediction with the 1201x1201 dataset and a visualization is produced and saved as an h5 file. 
+## LSTM+Dense layer based Model
+
+The LSTM+Dense based model is trained with the same dataset as Dense based model.RMSE, MAE, R^2 metrics are also used here to evaluate the model.The model creates a prediction with the 1201x1201 dataset and a visualization is produced and saved as an h5 file. 
+
