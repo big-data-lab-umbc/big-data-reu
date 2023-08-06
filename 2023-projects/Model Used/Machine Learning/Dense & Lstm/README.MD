@@ -1,14 +1,13 @@
-**Dense_With_NewPreprocessing.ipynb**
--standardizes the features and scales the target variable
--uses dense layers to predict ice bed topography
--KNN MAG data used with the training
--Evaluates the model using RMSE, MAE, R^2
--Visualizes predictions as a 2D plot
+# ** Dense and LSTM Based Model**
+## Dense layer based model
 
-**LSTM_with_vMag_dataset.ipynb**
-The full velocity magnitude csv is read in, cleaned, and split into a testing and training section. 
-The LSTM model is defined and trained. 
-The model creates predictions with each training and testing data and metrics are calculated. 
-The model creates a prediction with the 1201x1201 dataset and a visualization is produced and saved as an h5 file. 
+The model is created based on standardizing the features and scales the target variable. It uses dense layers to predict ice bed topography.The model is trained with Nearest Neighbor interpolated data with physics based infusion of velocity. RMSE, MAE, R^2 are used to evaluate the model. Finally, the topography is visualized using a 2D plot. 
+
+
+## LSTM+Dense layer based Model
+
+The LSTM+Dense based model is trained with the same dataset as Dense based model.RMSE, MAE, R^2 metrics are also used here to evaluate the model.The model creates a prediction with the 1201x1201 dataset and a visualization is produced and saved as an h5 file. 
+
+
 
 
