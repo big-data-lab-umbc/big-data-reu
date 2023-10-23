@@ -1,13 +1,14 @@
-# **Team 1 UMBC REU Summer 2022** 
 
-## **Title:** Big Data and Machine Learning Techniques for Atmospheric Gravity Wave Detection
+# **Evaluating Machine Learning and Statistical Models for Greenland Bed Topography**
 
-**Team Members:** Hannah Nguyen, Jorge Gonzalez, Kathryn Chen, Theodore Chapman, Logan Chambers
+**Team Members**: Katherine Yi, Angelina Dewar, Tartela Tabassun, Jason Lu, Ray Chen
 
-**RA:** Seraj A.M. Mostafa
 
-**Mentor:** Dr. Jianwu Wang
+**RA**: Homayra Alam
 
-**Colaborator:** Dr. Jia Yue, Dr. Chenxi Wang, Dr. Sanjay Purushotham
+**Mentor**: Dr. Jianwu Wang
 
-**Abstract:** Atmospheric gravity waves are produced when gravity attempts to restore disturbances through stable layers in the atmosphere. They have a visible effect on many atmospheric phenomena such as global circulation and air turbulence. Despite their importance, however, little research has been conducted on how to detect gravity waves using machine learning algorithms. We faced two major challenges in our research: our labeled dataset was extremely small, and our raw data had a lot of noise. In this study, we explored various methods of preprocessing and transfer learning in order to address those challenges. We pre-trained an autoencoder on unlabeled data before training it to classify labeled data. We also created a custom CNN by combining certain pre-trained layers from the InceptionV3 Model trained on ImageNet with custom layers and a custom learning rate scheduler. Our best model outperformed state-of-the-art architectures with a test accuracy 6.36% higher than the best performing baseline architecture.
+**Collaborator**: Dr. Mathieu Morlinghem, Professor, Department of Earth Sciences, Dartmouth College,Sikan Li, Research Engineer, Texas Advanced Computing Center, University of Texas at Austin,Omar Faruque, Ph.D. student, Department of Information Systems, University of Maryland, Baltimore County
+
+**Abstract**: 
+The purpose of this research is to study how different machine learning and statistical models can be used to predict bed topography in Greenland using ice-penetrating radar and satellite imagery data. Accurate bed topography representations are crucial for understanding ice sheet stability, melt, and vulnerability to climate change. We explored nine predictive models including dense neural network, LSTM, variational auto-encoder (VAE), extreme gradient boosting (XGBoost), gaussian process regression, and kriging-based residual learning. Model performance was evaluated with mean absolute error (MAE), root mean squared error (RMSE), coefficient of determination (R$^2$), and terrain ruggedness index (TRI). In addition to testing various models, different interpolation methods, including nearest neighbor, bilinear, and kriging, were also applied in preprocessing. The XGBoost model with kriging interpolation exhibited strong predictive capabilities but demands extensive resources. Alternatively, the XGBoost model with bilinear interpolation showed robust predictive capabilities and required fewer resources. These models effectively captured the complexity of the Greenland ice sheet terrain with precision and efficiency, making them valuable tools for representing spatial patterns in diverse landscapes.
