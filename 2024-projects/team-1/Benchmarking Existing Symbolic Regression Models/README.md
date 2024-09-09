@@ -1,11 +1,9 @@
 # **Benchmarking Existing Symbolic Regression Models**
 
 ### **Introduction**
-Several symbolic regression models were benchmarked across our data to predict rain precipitation. Our benchmarking procedure mirrors the benchmarking procedure performed at [SRBench](https://cavalab.org/srbench/). Each model performs 10 iterations using scikit-learn's `train_test_split()` function to split the 2730 observations
-into 75% training (2047 observations) and 25% testing (683 observations) with the random state parameter set to the iteration of the for loop. This ensures that the data split will be the same for each model across each iteration.
+Several symbolic regression models were benchmarked across our data to predict precipitation rate. Our benchmarking procedure mirrors the benchmarking procedure performed at [SRBench](https://cavalab.org/srbench/). Each model performs 10 iterations using scikit-learn's `train_test_split()` function to split the 2730 observations into 75% training (2047 observations) and 25% testing (683 observations) with the random state parameter set to the iteration of the for loop. This ensures that the data split will be the same for each model across each iteration.
 
 ### **Symbolic Regression Models Tested**
-
 
 1.   [gplearn](https://github.com/trevorstephens/gplearn)
 2.   [GP-GOMEA](https://github.com/marcovirgolin/GP-GOMEA)
@@ -36,7 +34,7 @@ python benchmark_<model>.py
 
 
 #### **Parallel Processing**
-For each package except PySR, parallel processing is used to run all 10 iterations in parallel. This significantly decreases the wait time to benchmark the model. We used the `multiprocessing` tool from python and used the following code to create a pool of worker processes:
+For each package except PySR, parallel processing is used to run all 10 iterations in parallel. This significantly decreases the wait time to benchmark the model. For PySR, in order to return reproducible results with random_state, we had to turn off parallelism. For the rest of the models, we used the `multiprocessing` tool from Python and used the following code to create a pool of worker processes:
 ```
   #create multiprocessing Pool object with 10 process workers
   pool = multiprocessing.Pool()

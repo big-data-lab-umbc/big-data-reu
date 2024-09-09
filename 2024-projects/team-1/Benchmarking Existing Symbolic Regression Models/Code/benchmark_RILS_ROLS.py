@@ -5,54 +5,32 @@ Python to run all ten runs in parallel, and returns each output in order.
 
 import multiprocessing 
 import time 
-
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score, mean_squared_error
-
 import sympy as sp
-from sympy.parsing.sympy_parser import parse_expr
-
-# import package
-
-from rils_rols.rils_rols import RILSROLSRegressor, RILSROLSBinaryClassifier
-
-
-
-def round_floats(ex1):
-    """takes SymPy equation as input and
-    outputs a SymPy equation with rounded floats"""
-    ex2 = ex1
-    for a in sp.preorder_traversal(ex1):
-        if isinstance(a, sp.Float):
-            if abs(a) < 0.0001:
-                ex2 = ex2.subs(a, sp.Integer(0))
-            else:
-                ex2 = ex2.subs(a, round(a, 3))
-    return ex2
+from rils_rols.rils_rols import RILSROLSRegressor
 
 def get_symbolic_model(expr):
     """takes string as input and
-    outputs a simplified SymPy equation"""
+    outputs a SymPy equation"""
     feature_names = ['Z', 'ZDR', 'KDP', 'RhoHV']
     local_dict = {f:sp.Symbol(f) for f in feature_names}
     sp_model = sp.parse_expr(expr, local_dict=local_dict)
     return sp_model
 
-def get_simplicity(simplified_expr):
-    """takes simplified SymPy equation as input and
+def get_simplicity(sp_model):
+    """takes SymPy equation as input and
     outputs a score representing the equation's simplicity"""
     # compute numumber of components
     num_components = 0
-    for _ in sp.preorder_traversal(simplified_expr):
+    for _ in sp.preorder_traversal(sp_model):
         num_components += 1
 
     # compute simplicity as per srbench criteria by La Cava et al. (2021)
     simplicity = -np.round(np.log(num_components)/np.log(5), 1)
     return simplicity
-
-
 
 def model(seed: int):
   """
@@ -76,7 +54,6 @@ def model(seed: int):
   r2_test = r2_score(y_test, y_pred_test)
   all_r2 = r2_score(y, y_pred_all)
 
-
   # calculate test and train rmse
   rmse_train = np.sqrt(mean_squared_error(y_train, y_pred_train))
   rmse_test = np.sqrt(mean_squared_error(y_test, y_pred_test))
@@ -89,7 +66,6 @@ def model(seed: int):
   # get best equation from model (depends on the package), ensure it is a string
   expr = str(model.model_string())
   # ensure that equation string has consistent variable names: Z, ZDR, KDP, RhoHV
-  # double check that this is correct (it's possible that in some packages, x1 = Z, x2 = ZDR and so on)
   feature_dict = {"x0":"Z", "x1":"ZDR", "x2":"KDP", "x3":"RhoHV",
                   "x_0":"Z", "x_1":"ZDR", "x_2":"KDP", "x_3":"RhoHV",
                   "Reflectivity_sc":"Z", "Zdr_sc":"ZDR", "Kdp_sc":"KDP", "Rhohv_sc":"RhoHV"}
@@ -118,18 +94,13 @@ def model(seed: int):
       'simplicity' : expr_simple
   }
 
-
-
 if __name__ == "__main__":
   # import datasets
-  df = pd.read_csv("/home/jpulido1/reu2024_team1/research/srbench_julian/srbench/experiment/datasets/all_cases_scaled.csv")
+  df = pd.read_csv("dataset.csv")
 
   # split predictors and target accordignly
   X = df[['Reflectivity', 'Zdr', 'Kdp', 'Rhohv']]
   y = df['gauge_precipitation_matched']
-
-
-
 
   #create multiprocessing Pool object with 10 processors
   pool = multiprocessing.Pool() 
@@ -150,8 +121,6 @@ if __name__ == "__main__":
    
   print(f"time running all SR algorithms: {total}" )
 
-
-
   # Process and print results
   train_r2 = [result['train_r2'] for result in results]
   test_r2 = [result['test_r2'] for result in results]
@@ -163,8 +132,6 @@ if __name__ == "__main__":
   all_nrmse =   [result['all_nrmse'].item() for result in results]
   equations = [result['equation'] for result in results]
   simplicity = [result['simplicity'].item() for result in results]
-
-
 
   #convert output to dataframe
   metrics ={
@@ -181,7 +148,7 @@ if __name__ == "__main__":
   }
   output = pd.DataFrame(metrics)
 
-  output.to_csv(f"benchmark_metrics_RILS_ROLS.csv")
+  output.to_csv("benchmark_metrics_RILS_ROLS.csv")
 
   ##############################################################################################
   #report the iteration with the approx. median (the 5th highest) test r^2

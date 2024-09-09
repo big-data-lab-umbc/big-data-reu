@@ -102,7 +102,7 @@ def model(seed: int):
 
 if __name__ == "__main__":
     # import dataset
-    df = pd.read_csv('/umbc/xfs1/cybertrn/reu2024/team1/research/data/cases/all_cases_scaled_v3_clustered.csv')
+    df = pd.read_csv('dataset.csv')
 
     X = df[['Reflectivity', 'Zdr', 'Kdp', 'Rhohv']]
     y = df['gauge_precipitation_matched']
@@ -151,7 +151,7 @@ if __name__ == "__main__":
     }
     output = pd.DataFrame(metrics)
 
-    output.to_csv(f"benchmark_metrics_gplearn.csv")
+    output.to_csv("benchmark_metrics_gplearn.csv")
 
     #########################################################################################
     # print results

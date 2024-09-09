@@ -4,7 +4,7 @@ from sklearn.model_selection import train_test_split
 import pandas as pd
 import numpy as np
 
-df = pd.read_csv('all_cases_scaled_v3_clustered.csv')
+df = pd.read_csv('dataset.csv')
 
 predictors = df[['Reflectivity', 'Zdr', 'Kdp', 'Rhohv']]
 rain_rate = df['gauge_precipitation_matched'].values

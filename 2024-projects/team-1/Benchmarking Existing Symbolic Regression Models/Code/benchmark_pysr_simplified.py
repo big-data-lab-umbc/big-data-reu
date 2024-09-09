@@ -38,12 +38,14 @@ def run_model(seed: int):
         niterations=40,
         population_size=100,
         populations=15,
-        maxsize=30,
+        maxsize=9, # limit complexity
         binary_operators=["+", "-", "*", "/", "^"],
         unary_operators=["sin", "cos", "abs", "exp", "log", "sqrt"],
         random_state=1,
         deterministic=True,
-        procs=0
+        procs=0,
+        parsimony=0.0064, # multiplicative factor for how much to punish complexity
+        model_selection='accuracy' # selects the candidate model with the lowest loss (highest accuracy)
     )
 
     # train model and predict
@@ -128,7 +130,7 @@ if __name__ == "__main__":
     }
     output = pd.DataFrame(metrics)
 
-    output.to_csv("benchmark_metrics_pysr.csv")
+    output.to_csv("benchmark_metrics_pysr_simplified.csv")
 
     #########################################################################################
     # print results

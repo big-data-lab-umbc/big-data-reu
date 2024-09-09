@@ -29,7 +29,7 @@ def get_simplicity(sp_model):
 
 def read_data():
     # import dataset
-    df = pd.read_csv('/umbc/xfs1/cybertrn/reu2024/team1/research/data/cases/all_cases_scaled_v3_clustered.csv')
+    df = pd.read_csv('dataset.csv')
 
     X = df[['Reflectivity', 'Zdr', 'Kdp', 'Rhohv']].values
     y = df['gauge_precipitation_matched'].values
