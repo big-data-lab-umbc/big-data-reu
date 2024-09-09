@@ -5,7 +5,6 @@ import sympy as sp
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score, mean_squared_error
 import feyn
-from feyn.tools import split
 
 def get_symbolic_model(expr):
     """takes string as input and
@@ -137,9 +136,9 @@ def run_feyn_all_groups(df, radar):
 
 if __name__ == "__main__":
 
-    df = pd.read_csv("/umbc/xfs1/cybertrn/reu2024/team1/research/data/cases/all_cases_scaled_v3_clustered.csv")
+    df = pd.read_csv("dataset.csv")
 
     radar = sys.argv[1]
 
     metrics = run_feyn_all_groups(df, radar)
-    metrics.to_csv(f"/umbc/xfs1/cybertrn/reu2024/team1/research/results/subsets/subset_metrics_feyn_{radar}_mean.csv")
+    metrics.to_csv(f"subset_metrics_feyn_{radar}_mean.csv")
