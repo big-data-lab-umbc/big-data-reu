@@ -7,7 +7,6 @@ from sklearn.tree import plot_tree
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score, mean_squared_error
 import feyn
-from feyn.tools import split
 
 def get_symbolic_model(expr):
     """takes string as input and
@@ -127,7 +126,7 @@ def run_dt_feyn(df):
 
     plt.figure(figsize=(12, 12))
     plot_tree(tree, feature_names=['Z', 'ZDR', 'KDP', 'RhoHV'])
-    plt.savefig('/umbc/xfs1/cybertrn/reu2024/team1/research/results/subsets/decision_tree_plot.png')
+    plt.savefig('decision_tree_plot.png')
 
     # create new column with leaf node index
     df_feyn['node'] = tree.apply(X)
@@ -157,7 +156,7 @@ def run_dt_feyn(df):
 
 if __name__ == "__main__":
 
-    df = pd.read_csv("/umbc/xfs1/cybertrn/reu2024/team1/research/data/cases/all_cases_scaled_v3_clustered.csv")
+    df = pd.read_csv("dataset.csv")
 
     metrics = run_dt_feyn(df)
-    metrics.to_csv(f"/umbc/xfs1/cybertrn/reu2024/team1/research/results/subsets/subset_metrics_feyn_decision_tree.csv")
+    metrics.to_csv("subset_metrics_feyn_decision_tree.csv")
