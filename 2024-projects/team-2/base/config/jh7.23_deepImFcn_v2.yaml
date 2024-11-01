@@ -1,0 +1,29 @@
+run_id: 'jh7.23_deepImFcn_v2'
+pred_ckpt: '/nfs/rs/cybertrn/reu2024/team2/base/logs/tb_logs/jh7.23_deepImFcn/lightning_logs/version_2/checkpoints/epoch=4999-step=455000.ckpt'
+resume_ckpt: ''
+mdl_key: 'deep_impr_fcn'
+
+data:
+  train_data_path: '/nfs/rs/cybertrn/reu2024/team2/base/pp2/data/barajas24/train/'  # must include '/' at end
+  test_data_path: '/nfs/rs/cybertrn/reu2024/team2/base/pp2/data/barajas_test/test/'  # changed on 7/23
+  batch_size: 4096
+  val_split: 0.1
+
+fit:
+  max_epochs: 5000
+  n_nodes: 1
+  n_devices: 8
+  patience: 1000
+
+model:
+  input_size: 15
+  num_classes: 13 
+  num_layers: 256
+  hidden_layers: [256,256,256,256]
+  lr: 0.001
+  lr_step: 400
+  lr_gam: 0.95
+  activation: 'swish'
+  penalty: 0.0001
+  dropout: 0.2
+  

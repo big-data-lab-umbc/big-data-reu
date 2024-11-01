@@ -1,0 +1,18 @@
+activation: relu
+dropout: 0.2
+hidden_layers:
+- 128
+- 64
+- 64
+- 64
+- 64
+- 64
+- 64
+- 32
+input_size: 15
+l2: 0.01
+lr: 0.0008
+lr_gam: 0.95
+lr_step: 500
+num_classes: 13
+penalty: 1

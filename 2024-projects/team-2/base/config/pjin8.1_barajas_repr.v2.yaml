@@ -1,0 +1,38 @@
+run_id: 'pjin8.1_barajas_repr.v2'
+pred_ckpt: ''  # only use if doing inference
+resume_ckpt: ''
+mdl_key: 'impr_lstm24'
+
+data:  # shouldn't be deleting any of these
+  train_data_path: '/nfs/rs/cybertrn/reu2024/team2/base/pp2/data/barajas/train/'  # must include '/' at end
+  test_data_path: '/nfs/rs/cybertrn/reu2024/team2/base/pp2/data/barajas/test/'
+  batch_size: 2048
+  val_split: 0.1
+
+fit:  # shouldn't be deleting any of these
+  max_epochs: 8000
+  n_nodes: 1
+  n_devices: 4
+  patience: 8000
+  ckpt_freq: 300
+
+model:
+  indim: 15
+  outdim: 13
+  num_linears: 2
+  neurons_per_hidden: [128,64] #this should also be an array, but it must divide the num_linears evenly
+  input_neurons: 128
+  num_lstm_layers: 4
+  hidden_state_size: 128 #in the 2023
+  lr: 0.001
+  l2: 0
+  lr_step: 2000
+  lr_gam: 0.1
+  dropout: 0
+  activation: 'relu'
+  penalty: 0
+  optimizer: 'adamw'
+  one_activation: False
+  custom_loss: False
+  bias: False
+

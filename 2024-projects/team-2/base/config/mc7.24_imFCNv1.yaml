@@ -1,0 +1,28 @@
+# shouldn't be deleting any of these
+run_id: 'mc7.24_imFCNv1'
+pred_ckpt: ''  # only change if doing inference
+resume_ckpt: ''  # leave as '' if not resuming
+mdl_key: 'impr_fcn'
+
+data:  # shouldn't be deleting any of these
+  train_data_path: '/nfs/rs/cybertrn/reu2024/team2/base/pp2/data/barajas_test/train/'  # must include '/' at end
+  test_data_path: '/nfs/rs/cybertrn/reu2024/team2/base/pp2/data//test/'
+  batch_size: 4096
+  val_split: 0.1
+
+fit:  # shouldn't be deleting any of these
+  max_epochs: 4000
+  n_nodes: 1
+  n_devices: 4
+  patience:  4000  # make arbitrarily large to turn off early stopping
+
+model:  # should match the model you are using
+  input_size: 15
+  num_classes: 13 
+  hidden_layers: [256,256,256,256,256,256,256,256,256,256,256,256,256,256,256,256,256,256,256,256]
+  lr: 0.001
+  lr_step: 400
+  lr_gam: 0.95
+  activation: 'relu'
+  penalty: 0.00001
+  dropout: 0.5

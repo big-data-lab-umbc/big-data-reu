@@ -1,0 +1,27 @@
+run_id: 'mc7.16_imFCNv3'
+pred_ckpt: '../../../logs/tb_logs/mc7.16_imFCNv3/lightning_logs/version_0/checkpoints/epoch=1064-step=8183460.ckpt'
+mdl_key: 'impr_fcn'
+
+data:
+  train_data_path: '/nfs/rs/cybertrn/reu2024/team2/base/pp2/data/barajas24/train/'  # must include '/' at end
+  test_data_path: '/nfs/rs/cybertrn/reu2024/team2/base/pp2/data/barajas24/test/'
+  batch_size: 32
+  val_split: 0.1
+
+fit:
+  max_epochs: 4000
+  n_nodes: 1
+  n_devices: 6
+  patience: 1000
+
+model:
+  input_size: 15
+  num_classes: 13 
+  hidden_layers: [512, 394, 256, 192, 128, 96, 64, 32, 16]
+  lr: 0.001
+  lr_step: 400
+  lr_gam: 0.95
+  activation: 'relu'
+  penalty: 0.0001
+  dropout: 0.2
+  

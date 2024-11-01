@@ -1,0 +1,26 @@
+activation: relu
+dropout: null
+hidden_layers:
+- 2048
+- 1024
+- 678
+- 576
+- 512
+- 256
+- 256
+- 256
+- 256
+- 256
+- 256
+- 256
+- 256
+- 64
+- 32
+- 16
+input_size: 15
+l2: 0
+lr: 0.0005
+lr_gam: 0.95
+lr_step: 500
+num_classes: 13
+penalty: 1

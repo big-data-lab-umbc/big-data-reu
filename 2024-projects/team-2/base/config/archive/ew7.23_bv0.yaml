@@ -1,0 +1,29 @@
+run_id: 'ew7.23_bv0' 
+pred_ckpt: '/nfs/rs/cybertrn/reu2024/team2/base/logs/tb_logs/ew7.23_bv0/lightning_logs/version_0/checkpoints/epoch=2999-step=543000.ckpt'  
+resume_ckpt: ''  
+mdl_key: 'LSTM23'
+
+data:
+  train_data_path: '/nfs/rs/cybertrn/reu2024/team2/base/pp2/data/barajas/train/'
+  test_data_path: '/nfs/rs/cybertrn/reu2024/team2/base/pp2/data/barajas/test/'
+  batch_size: 2048
+  val_split: 0.1
+
+fit:
+  max_epochs: 3000
+  n_nodes: 1
+  n_devices: 4
+  patience: 450
+
+model:
+  # LSTM
+  indim: 15
+  outdim: 13
+  num_layers: 16
+  neurons: 256
+  lr: 0.001
+  lr_step: 450
+  lr_gam: 0.95
+  dropout: 0.25
+  activation: 'relu'
+  optimizer: 'adam'

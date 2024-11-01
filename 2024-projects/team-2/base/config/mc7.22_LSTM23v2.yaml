@@ -1,0 +1,29 @@
+run_id: 'mc7.22_LSTM23v2'
+pred_ckpt: '/nfs/rs/cybertrn/reu2024/team2/base/logs/tb_logs/mc7.22_LSTM23v2/lightning_logs/version_0/checkpoints/epoch=7999-step=1448000.ckpt'
+resume_ckpt: ''  # leave as '' if not resuming
+mdl_key: 'LSTM23'
+
+data:
+  train_data_path: '/nfs/rs/cybertrn/reu2024/team2/base/pp2/data/barajas/train/'  # must include '/' at end
+  test_data_path: '/nfs/rs/cybertrn/reu2024/team2/base/pp2/data/barajas/test/'
+  batch_size: 2048
+  val_split: 0.1
+
+fit:
+  max_epochs: 8000
+  n_nodes: 1
+  n_devices: 4
+  patience: 1000
+
+model:
+  # 2023 LSTM
+  indim: 15
+  outdim: 13
+  num_layers: 8
+  neurons: 256
+  lr: 0.001
+  lr_step: 400
+  lr_gam: 0.95
+  dropout: 0.65
+  activation: 'relu'
+  optimizer: 'adam'

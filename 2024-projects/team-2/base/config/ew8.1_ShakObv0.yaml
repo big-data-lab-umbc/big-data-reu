@@ -1,0 +1,36 @@
+# shouldn't be deleting any of these
+run_id: 'ew8.1_ShakObv0'
+pred_ckpt: ''  # only change if doing inference
+resume_ckpt: ''  # leave as '' if not resuming
+mdl_key: 'LSTM23'
+
+data:  # shouldn't be deleting any of these
+  train_data_path: '/nfs/rs/cybertrn/reu2024/team2/base/pp2/data/shakeri-obe/train/'  # must include '/' at end
+  test_data_path: '/nfs/rs/cybertrn/reu2024/team2/base/pp2/data/shakeri-obe/test/'
+  batch_size: 1024
+  val_split: .2
+
+
+fit:  # shouldn't be deleting any of these
+  max_epochs: 1000 
+  n_nodes: 1
+  n_devices: 4
+  patience: 1000 # make arbitrarily large to turn off early stopping
+  ckpt_freq: 500  # dumb checkpointing: saves every n epochs
+
+model:  # should match the model you are using
+  indim: 15
+  outdim: 13
+  num_layers: 12
+  neurons: 256
+  lr: 0.001
+  lr_step: 400
+  lr_gam: 0.95
+  l2: .01
+  dropout: 0.25
+  activation: 'relu'
+  optimizer: 'adam'
+
+
+
+  

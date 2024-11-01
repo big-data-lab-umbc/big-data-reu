@@ -1,0 +1,10 @@
+activation: relu
+dropout: 0.1
+indim: 15
+lr: 0.001
+lr_gam: 0.95
+lr_step: 400
+neurons: 256
+num_layers: 12
+optimizer: adam
+outdim: 13

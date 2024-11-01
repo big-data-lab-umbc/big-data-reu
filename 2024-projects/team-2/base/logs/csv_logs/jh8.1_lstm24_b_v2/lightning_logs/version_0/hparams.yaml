@@ -1,0 +1,22 @@
+activation: relu
+bias: true
+custom_loss: false
+dropout: 0.45
+hidden_state_size: 128
+indim: 15
+input_neurons: 128
+l2: 1.0e-07
+lr: 0.001
+lr_gam: 0.95
+lr_step: 450
+neurons_per_hidden:
+- 128
+- 128
+- 128
+- 128
+num_linears: 4
+num_lstm_layers: 4
+one_activation: true
+optimizer: adam
+outdim: 13
+penalty: 1

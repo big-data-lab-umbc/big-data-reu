@@ -1,0 +1,35 @@
+# shouldn't be deleting any of these
+run_id: 'ep7.25_lstml2_01'
+pred_ckpt: '/nfs/rs/cybertrn/reu2024/team2/base/logs/tb_logs/ep7.25_lstml2_01/lightning_logs/version_4/checkpoints/epoch=99-step=16900.ckpt'  # only change if doing inference
+resume_ckpt: ''  # leave as '' if not resuming
+mdl_key: 'LSTM23'
+
+data:  # shouldn't be deleting any of these
+  train_data_path: '/nfs/rs/cybertrn/reu2024/team2/base/pp2/data/mship_v2/train/'  # must include '/' at end
+  test_data_path: '/nfs/rs/cybertrn/reu2024/team2/base/pp2/data/mship_v2/test/'
+  batch_size: 4096
+  val_split: .2
+
+fit:  # shouldn't be deleting any of these
+  max_epochs: 300
+  n_nodes: 1
+  n_devices: 4
+  patience: 1000 # make arbitrarily large to turn off early stopping
+  ckpt_freq: 100  # dumb checkpointing: saves every n epochs
+
+model:  # should match the model you are using
+  indim: 15
+  outdim: 13
+  num_layers: 16
+  neurons: 256
+  lr: 0.001
+  lr_step: 400
+  lr_gam: 0.95
+  l2: .0000000001
+  dropout: 0.15
+  activation: 'relu'
+  optimizer: 'adam'
+
+
+
+  

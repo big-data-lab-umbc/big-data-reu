@@ -1,0 +1,24 @@
+run_id: 'mc7.16_LSTM23v3'
+pred_ckpt: '/home/mchen14/reu2024_team2/base/logs/tb_logs/mc7.16_LSTM23v3/lightning_logs/version_4/checkpoints/epoch=7999-step=336000.ckpt'
+mdl_key: 'LSTM23'
+
+data:
+  train_data_path: '/nfs/rs/cybertrn/reu2024/team2/base/pp2/data/gldnboy/train/'  # must include '/' at end
+  test_data_path: '/nfs/rs/cybertrn/reu2024/team2/base/pp2/data/barajas24/test/'  # changed for the additioanl tests
+  batch_size: 4096
+  val_split: 0.2
+
+fit:
+  max_epochs: 8000  # changed
+  n_nodes: 1
+  n_devices: 4
+  patience: 2000
+
+model:
+  # 2023 LSTM
+  indim: 15
+  outdim: 13
+  num_layers: 16
+  neurons: 256
+  momentum: 0.1
+  

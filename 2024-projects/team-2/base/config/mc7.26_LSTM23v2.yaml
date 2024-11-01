@@ -1,0 +1,32 @@
+# testing curve
+run_id: 'mc7.26_LSTM23v2'
+pred_ckpt: '/nfs/rs/cybertrn/reu2024/team2/base/logs/ckpts/mc7.26_LSTM23v2/epoch=6299-step=1140300.ckpt'
+resume_ckpt: ''
+mdl_key: 'LSTM23'
+
+data:
+  train_data_path: '/nfs/rs/cybertrn/reu2024/team2/base/pp2/data/barajas_test_reset/train/'  # must include '/' at end
+  test_data_path: '/nfs/rs/cybertrn/reu2024/team2/base/pp2/data/barajas_test_reset/train/'
+  batch_size: 2048
+  val_split: 0.1
+
+fit:
+  max_epochs: 8000
+  n_nodes: 1
+  n_devices: 4
+  patience: 8000
+  ckpt_freq: 100
+
+model:
+  # 2023 LSTM
+  indim: 15
+  outdim: 13
+  num_layers: 16
+  neurons: 256
+  lr: 0.001
+  lr_step: 400
+  lr_gam: 0.95
+  dropout: 0.5
+  #log_test: True
+  activation: 'relu'
+  optimizer: 'adam'

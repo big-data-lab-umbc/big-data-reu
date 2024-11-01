@@ -1,0 +1,30 @@
+run_id: 'ew7.18_LSTMrueh24v0'
+pred_ckpt: '/nfs/rs/cybertrn/reu2024/team2/base/logs/tb_logs/ew7.18_LSTMrueh24v0/lightning_logs/version_0/checkpoints/epoch=2999-step=126000.ckpt'
+mdl_key: 'LSTM23'
+
+data:
+  train_data_path: '/nfs/rs/cybertrn/reu2024/team2/base/pp2/data/gldnboy/train/'  # must include '/' at end
+  test_data_path: '/nfs/rs/cybertrn/reu2024/team2/base/pp2/data/gldnboy/test/'
+  batch_size: 4096
+  val_split: 0.2
+
+fit:
+  max_epochs: 3000
+  n_nodes: 1
+  n_devices: 4
+  patience: 450
+
+model:
+  # LSTM
+  indim: 15
+  outdim: 13
+  num_layers: 16
+  neurons: 256
+  # momentum: 0.1
+  lr: 1.0e-3
+  lr_step: 450
+  lr_gam: 0.95
+  dropout: 0.25
+  activation: 'relu'
+  optimizer: 'adam'
+  

@@ -1,0 +1,21 @@
+activation: leakyrelu
+bias: true
+custom_loss: true
+dropout: 0.0
+hidden_state_size: 256
+indim: 15
+input_neurons: 256
+lr: 1.0e-05
+lr_gam: 0.95
+lr_step: 400
+neurons_per_hidden:
+- 256
+- 256
+- 256
+- 256
+num_linears: 4
+num_lstm_layers: 4
+one_activation: true
+optimizer: adam
+outdim: 13
+penalty: 0.0001
