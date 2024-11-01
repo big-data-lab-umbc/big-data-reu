@@ -1,0 +1,39 @@
+# shouldn't be deleting any of these
+run_id: 'jh7.31_lstm24_study2'
+#pred_ckpt: '/nfs/rs/cybertrn/reu2024/team2/base/logs/tb_logs/jh7.29_lstm24_ms/lightning_logs/version_1/checkpoints/epoch=2999-step=507000.ckpt'  # only change if doing inference
+pred_ckpt: '/nfs/rs/cybertrn/reu2024/team2/base/logs/tb_logs/jh7.31_lstm24_study2/lightning_logs/version_4/checkpoints/epoch=902-step=47859.ckpt'
+resume_ckpt: ''  # leave as '' if not resuming
+mdl_key: 'impr_lstm24'
+
+data:  # shouldn't be deleting any of these
+  train_data_path: '/nfs/rs/cybertrn/reu2024/team2/base/pp2/data/shakeri-obe/train/'  # must include '/' at end
+  test_data_path: '/nfs/rs/cybertrn/reu2024/team2/base/pp2/data/shakeri-obe/test/'
+  batch_size: 4096
+  val_split: .1
+
+fit:  # shouldn't be deleting any of these
+  max_epochs: 2048 
+  n_nodes: 1
+  n_devices: 1
+  patience: 500  # make arbitrarily large to turn off early stopping
+  ckpt_freq: 100
+
+model:  # should match the model you are using
+  indim: 15
+  outdim: 13
+  num_linears: 4
+  neurons_per_hidden: [128,128,128,128] #this should also be an array, but it must divide the num_linears evenly
+  input_neurons: 128
+  num_lstm_layers: 4 #the number of lstm layers can be changed here
+  hidden_state_size: 128 #in the 2023 
+  lr: 0.001
+  l2: 0.01
+  lr_step: 100
+  lr_gam: 0.95
+  dropout: 0.15
+  activation: 'leakyrelu'
+  penalty: 1
+  optimizer: 'adamw'
+  one_activation: False
+  custom_loss: True
+  bias: true

@@ -1,0 +1,28 @@
+run_id: 'mc7.18_LSTM23v2'
+pred_ckpt: ''
+mdl_key: 'LSTM23'
+
+data:
+  train_data_path: '/nfs/rs/cybertrn/reu2024/team2/base/pp2/data/barajas24/train/'  # must include '/' at end
+  test_data_path: '/nfs/rs/cybertrn/reu2024/team2/base/pp2/data/barajas24/test/'
+  batch_size: 2048
+  val_split: 0.1
+
+fit:
+  max_epochs: 8000
+  n_nodes: 1
+  n_devices: 4
+  patience: 1000
+
+model:
+  # 2023 LSTM
+  indim: 15
+  outdim: 13
+  num_layers: 24
+  neurons: 256
+  lr: 0.008
+  lr_step: 400
+  lr_gam: 0.95
+  dropout: 0.5
+  activation: 'leakyrelu'
+  optimizer: 'adam'

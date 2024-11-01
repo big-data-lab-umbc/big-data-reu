@@ -1,0 +1,30 @@
+run_id: 'ew7.22_LSTMshobe24v0' 
+pred_ckpt: '/nfs/rs/cybertrn/reu2024/team2/base/logs/tb_logs/ew7.22_LSTMshobe24v0/lightning_logs/version_1/checkpoints/epoch=2999-step=66000.ckpt'
+resume_ckpt: ''  
+mdl_key: 'LSTM23'
+
+data:
+  train_data_path: '/nfs/rs/cybertrn/reu2024/team2/base/pp2/data/shobe24v1/train/'
+  test_data_path: '/nfs/rs/cybertrn/reu2024/team2/base/pp2/data/shobe24v1/test/'
+  batch_size: 4096
+  val_split: 0.2
+
+fit:
+  max_epochs: 3000
+  n_nodes: 1
+  n_devices: 4
+  patience: 450
+  ckpt_freq:  # dumb checkpointing: saves every n epochs
+
+model:
+  # LSTM
+  indim: 15
+  outdim: 13
+  num_layers: 16
+  neurons: 256
+  lr: 0.001
+  lr_step: 450
+  lr_gam: 0.95
+  dropout: 0.25
+  activation: 'relu'
+  optimizer: 'adam'

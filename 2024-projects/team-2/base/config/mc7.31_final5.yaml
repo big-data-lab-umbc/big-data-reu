@@ -1,0 +1,30 @@
+run_id: 'mc7.31_final5'
+pred_ckpt: '/nfs/rs/cybertrn/reu2024/team2/base/logs/ckpts/mc7.31_final5/last.ckpt'
+resume_ckpt: '/nfs/rs/cybertrn/reu2024/team2/base/logs/ckpts/mc7.31_final5/last.ckpt'
+mdl_key: 'impr_fcn'
+
+data:  
+  train_data_path: '/nfs/rs/cybertrn/reu2024/team2/base/pp2/data/shakeri-obe/train/' 
+  test_data_path: '/nfs/rs/cybertrn/reu2024/team2/base/pp2/data/shakeri-obe/test/'
+  batch_size: 512
+  val_split: 0.1
+
+fit:  
+  max_epochs: 4000
+  n_nodes: 1
+  n_devices: 2
+  patience:  500 
+  ckpt_freq: 50
+
+model:  
+  input_size: 15
+  num_classes: 13
+  hidden_layers: [512, 256, 256, 256, 256, 256, 256, 128] 
+  activation: 'relu'
+  lr: 0.0008
+  lr_step: 500
+  lr_gam: 0.95
+  penalty: 1
+  dropout: 0.2
+  l2: 0.01
+

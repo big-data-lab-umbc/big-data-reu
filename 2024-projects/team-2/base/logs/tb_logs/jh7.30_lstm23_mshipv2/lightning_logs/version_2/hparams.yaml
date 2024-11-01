@@ -1,0 +1,12 @@
+activation: leakyrelu
+dropout: 0.2
+indim: 15
+l2: 0.01
+log_test: false
+lr: 0.001
+lr_gam: 0.95
+lr_step: 100
+neurons: 128
+num_layers: 2
+optimizer: adamw
+outdim: 13

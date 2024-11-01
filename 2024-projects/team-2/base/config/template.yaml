@@ -1,0 +1,28 @@
+# shouldn't be deleting any of these
+run_id: ''
+pred_ckpt: ''  # only change if doing inference
+resume_ckpt: ''  # leave as '' if not resuming
+mdl_key: ''
+
+data:  # shouldn't be deleting any of these
+  train_data_path: '/nfs/rs/cybertrn/reu2024/team2/base/pp2/data/^^DATA_ID^^/train/'  # must include '/' at end
+  test_data_path: '/nfs/rs/cybertrn/reu2024/team2/base/pp2/data/^^DATA_ID^^/test/'
+  batch_size: 
+  val_split: 
+
+fit:  # shouldn't be deleting any of these
+  max_epochs: 
+  n_nodes: 
+  n_devices:
+  patience:  # make arbitrarily large to turn off early stopping
+  ckpt_freq:  # dumb checkpointing: saves every n epochs
+
+model:  # should match the model you are using
+  param1:
+  param2: ...
+
+
+### updates
+  - 7/16/24 11:22pm MDT: mc creates the file
+  - 7/22/24 5:47pm MDT: mc adds resume_ckpt
+  
