@@ -1,0 +1,31 @@
+run_id: 'pjin7.31_sharma.v6'
+pred_ckpt: ''  # only use if doing inference
+resume_ckpt: ''
+mdl_key: 'LSTM23'
+
+data:  # shouldn't be deleting any of these
+  train_data_path: '/nfs/rs/cybertrn/reu2024/team2/base/pp2/data/sharma/train/'  # must include '/' at end
+  test_data_path: '/nfs/rs/cybertrn/reu2024/team2/base/pp2/data/sharma/test/'
+  batch_size: 2048
+  val_split: 0.1
+
+fit:  # shouldn't be deleting any of these
+  max_epochs: 2500
+  n_nodes: 1
+  n_devices: 4
+  patience: 2500
+  ckpt_freq: 300
+
+model:
+  indim: 15
+  outdim: 13
+  num_layers: 7
+  neurons: 512
+  lr: 0.001
+  lr_step: 450
+  lr_gam: 0.95
+  l2: .00001
+  dropout: 0.65
+  activation: 'relu'
+  optimizer: 'adam'
+

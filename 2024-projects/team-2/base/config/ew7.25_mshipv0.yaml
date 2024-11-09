@@ -1,0 +1,31 @@
+# shouldn't be deleting any of these
+run_id: 'ew7.25_mshipv0'
+pred_ckpt: '' #'/umbc/xfs1/cybertrn/reu2024/team2/base/logs/ckpts/ew7.25_mshipv0/epoch=999-step=216000.ckpt'  # only change if doing inference
+resume_ckpt: '/umbc/xfs1/cybertrn/reu2024/team2/base/logs/ckpts/ew7.25_mshipv0/epoch=999-step=216000.ckpt'
+mdl_key: 'LSTM23'
+
+data:
+  train_data_path: '/nfs/rs/cybertrn/reu2024/team2/base/pp2/data/mship_v1/train/'
+  test_data_path: '/nfs/rs/cybertrn/reu2024/team2/base/pp2/data/mship_v1/test/'
+  batch_size: 2048
+  val_split: 0.2
+
+fit:
+  max_epochs: 3000
+  n_nodes: 1
+  n_devices: 4
+  patience: 3000
+  ckpt_freq: 3000 # dumb checkpointing: saves every n epochs
+
+model:
+  # LSTM
+  indim: 15
+  outdim: 13
+  num_layers: 16
+  neurons: 256
+  lr: 0.001
+  lr_step: 450
+  lr_gam: 0.95
+  dropout: 0.25
+  activation: 'relu'
+  optimizer: 'adam'

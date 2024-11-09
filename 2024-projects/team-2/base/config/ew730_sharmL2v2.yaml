@@ -1,0 +1,31 @@
+run_id: 'ew730_sharmL2v1'  
+pred_ckpt: '/nfs/rs/cybertrn/reu2024/team2/base/logs/tb_logs/ew730_sharmL2v1/lightning_logs/version_0/checkpoints/epoch=978-step=1485143.ckpt'
+resume_ckpt: ''  
+mdl_key: 'LSTM23'
+
+data:
+  train_data_path: '/nfs/rs/cybertrn/reu2024/team2/base/pp2/data_old/mship_v2/train/'
+  test_data_path: '/nfs/rs/cybertrn/reu2024/team2/base/pp2/data_old/sharma/test/'
+  batch_size: 2048
+  val_split: 0.1
+
+fit:
+  max_epochs: 1000
+  n_nodes: 1
+  n_devices: 4
+  patience: 1000
+  ckpt_freq: 500
+
+model:
+  # LSTM
+  indim: 15
+  outdim: 13
+  num_layers: 12
+  l2: .000001
+  neurons: 256
+  lr: 0.001
+  lr_step: 450
+  lr_gam: 0.95
+  dropout: 0.25
+  activation: 'relu'
+  optimizer: 'adam'

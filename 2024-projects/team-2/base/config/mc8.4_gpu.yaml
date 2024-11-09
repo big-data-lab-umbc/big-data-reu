@@ -1,0 +1,31 @@
+# 32 GPU
+run_id: 'mc8.4_gpu'
+pred_ckpt: '' 
+resume_ckpt: ''
+mdl_key: 'impr_fcn'
+
+data:  
+  train_data_path: '/nfs/rs/cybertrn/reu2024/team2/base/pp2/data/shakeri-obe/train/' 
+  test_data_path: '/nfs/rs/cybertrn/reu2024/team2/base/pp2/data/shakeri-obe/test/'
+  batch_size: 1024
+  val_split: 0.1
+
+fit:  
+  max_epochs: 2000
+  n_nodes: 4
+  n_devices: 8
+  patience:  500 
+  ckpt_freq: 50
+
+model:  
+  input_size: 15
+  num_classes: 13
+  hidden_layers: [512, 1024, 512, 256, 256, 256,256,256, 256, 256, 256, 128]
+  activation: 'relu'
+  lr: 0.001
+  lr_step: 500
+  lr_gam: 0.95
+  penalty: 1
+  dropout: 0.15
+  l2: 0.01
+

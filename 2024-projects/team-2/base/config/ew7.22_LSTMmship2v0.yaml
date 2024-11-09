@@ -1,0 +1,30 @@
+run_id: 'ew7.22_LSTMmship2v0'
+pred_ckpt: '/nfs/rs/cybertrn/reu2024/team2/base/logs/tb_logs/ew7.22_LSTMmship2v0/lightning_logs/version_0/checkpoints/epoch=2999-step=507000.ckpt'
+resume_ckpt: ''
+mdl_key: 'LSTM23'
+
+data:
+  train_data_path: '/nfs/rs/cybertrn/reu2024/team2/base/pp2/data/mship_v2/train/'
+  test_data_path: '/nfs/rs/cybertrn/reu2024/team2/base/pp2/data/mship_v2/test/'
+  batch_size: 2048
+  val_split: 0.1
+
+fit:
+  max_epochs: 3000
+  n_nodes: 1
+  n_devices: 4
+  patience: 450
+  ckpt_freq: 100 # dumb checkpointing: saves every n epochs
+
+model:
+  # LSTM
+  indim: 15
+  outdim: 13
+  num_layers: 15
+  neurons: 256
+  lr: 0.001
+  lr_step: 450
+  lr_gam: 0.95
+  dropout: 0.15
+  activation: 'relu'
+  optimizer: 'adam'

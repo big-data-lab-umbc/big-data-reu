@@ -1,0 +1,28 @@
+run_id: 'pjin7.22_mothership'
+pred_ckpt: '/nfs/rs/cybertrn/reu2024/team2/base/logs/tb_logs/pjin7.22_mothership/lightning_logs/version_0/checkpoints/epoch=4094-step=499590.ckpt'  # only use if doing inference
+resume_ckpt: ''
+mdl_key: 'LSTM23'
+
+data:  # shouldn't be deleting any of these
+  train_data_path: '/nfs/rs/cybertrn/reu2024/team2/base/pp2/data/mship_v1/train/'  # must include '/' at end
+  test_data_path: '/nfs/rs/cybertrn/reu2024/team2/base/pp2/data/mship_v1/test/'
+  batch_size: 4096
+  val_split: 0.1
+
+fit:  # shouldn't be deleting any of these
+  max_epochs: 4095
+  n_nodes: 1
+  n_devices: 4
+  patience: 4095
+
+model:
+  indim: 15
+  outdim: 13
+  num_layers: 16
+  neurons: 256
+  lr: 0.001
+  lr_step: 450
+  lr_gam: 0.95
+  dropout: 0.25
+  activation: 'relu'
+  optimizer: 'adam' 
