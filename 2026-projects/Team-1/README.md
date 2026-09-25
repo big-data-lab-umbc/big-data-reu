@@ -31,7 +31,7 @@ Accurate nitrogen dioxide (NO2) forecasting is critical for air quality manageme
  
 This work is supported by the grant "REU Site: Online Interdisciplinary Big Data Analytics in Science and Engineering" from the National Science Foundation (grant no. OAC-2348755). We acknowledge the computational resources in the UMBC High Performance Computing Facility (hpcf.umbc.edu) and the financial contributions from NIH, NSF, CIRC, and UMBC for this work.
 
-![XGBoost Visualization Map](output/xgb_dpm_t1_2025-05-25.png)
+![XGBoost Visualization Map](output/xgb_frontpage_5-25.png)
 
 # Code Pipeline
 
